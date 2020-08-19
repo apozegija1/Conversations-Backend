@@ -23,10 +23,4 @@ public class UserService {
    public Optional<User> getUserWithAuthorities() {
       return SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
    }
-
-   @Transactional(readOnly = true)
-   public List<User> get() {
-      return userRepository.findAll();
-   }
-
 }
