@@ -1,8 +1,8 @@
-package org.infobip.conversations.users.security.repository;
+package org.infobip.conversations.users.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.infobip.conversations.users.security.repository.model.User;
+import org.infobip.conversations.users.repository.model.User;
 
 import java.util.Optional;
 

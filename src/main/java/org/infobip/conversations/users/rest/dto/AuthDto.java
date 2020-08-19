@@ -1,4 +1,4 @@
-package org.infobip.conversations.users.security.rest.dto;
+package org.infobip.conversations.users.rest.dto;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

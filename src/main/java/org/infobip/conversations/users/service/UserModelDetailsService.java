@@ -1,9 +1,9 @@
-package org.infobip.conversations.users.security.service;
+package org.infobip.conversations.users.service;
 
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.infobip.conversations.users.security.UserNotActivatedException;
-import org.infobip.conversations.users.security.repository.model.User;
-import org.infobip.conversations.users.security.repository.UserRepository;
+import org.infobip.conversations.users.repository.model.User;
+import org.infobip.conversations.users.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**

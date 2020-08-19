@@ -1,6 +1,6 @@
-package org.infobip.conversations.users.security.repository;
+package org.infobip.conversations.users.repository;
 
-import org.infobip.conversations.users.security.repository.model.Role;
+import org.infobip.conversations.users.repository.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

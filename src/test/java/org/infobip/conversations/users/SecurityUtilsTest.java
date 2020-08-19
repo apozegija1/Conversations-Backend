@@ -1,6 +1,6 @@
-package org.infobip.conversations.users.security;
+package org.infobip.conversations.users;
 
-import org.infobip.conversations.users.security.utils.SecurityUtils;
+import org.infobip.conversations.users.utils.SecurityUtils;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;

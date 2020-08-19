@@ -1,4 +1,4 @@
-package org.infobip.conversations.users.security.repository.model;
+package org.infobip.conversations.users.repository.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

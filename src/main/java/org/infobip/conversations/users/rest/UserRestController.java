@@ -1,11 +1,11 @@
-package org.infobip.conversations.users.security.rest;
+package org.infobip.conversations.users.rest;
 
-import org.infobip.conversations.users.security.service.UserService;
+import org.infobip.conversations.users.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.infobip.conversations.users.security.repository.model.User;
+import org.infobip.conversations.users.repository.model.User;
 
 import java.util.List;
 

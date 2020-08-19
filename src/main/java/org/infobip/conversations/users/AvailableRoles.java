@@ -1,4 +1,4 @@
-package org.infobip.conversations.users.security;
+package org.infobip.conversations.users;
 
 public enum AvailableRoles {
    SuperAdmin,

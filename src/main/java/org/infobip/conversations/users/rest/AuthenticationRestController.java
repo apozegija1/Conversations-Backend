@@ -1,4 +1,4 @@
-package org.infobip.conversations.users.security.rest;
+package org.infobip.conversations.users.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.infobip.conversations.users.security.jwt.JWTFilter;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.infobip.conversations.users.security.rest.dto.AuthDto;
+import org.infobip.conversations.users.rest.dto.AuthDto;
 
 import javax.validation.Valid;
 

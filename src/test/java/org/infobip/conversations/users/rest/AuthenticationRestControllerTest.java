@@ -1,4 +1,4 @@
-package org.infobip.conversations.users.security.rest;
+package org.infobip.conversations.users.rest;
 
 import org.infobip.conversations.util.AbstractRestControllerTest;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package org.infobip.conversations.users.security.repository.model;
+package org.infobip.conversations.users.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.BatchSize;

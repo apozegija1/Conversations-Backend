@@ -1,6 +1,5 @@
 package org.infobip.conversations.config;
 
-import org.infobip.conversations.users.security.AvailableRoles;
 import org.infobip.conversations.users.security.JwtAccessDeniedHandler;
 import org.infobip.conversations.users.security.JwtAuthenticationEntryPoint;
 import org.infobip.conversations.users.security.jwt.JWTConfigurer;

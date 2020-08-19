@@ -1,4 +1,4 @@
-package org.infobip.conversations.users.security.utils;
+package org.infobip.conversations.users.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
