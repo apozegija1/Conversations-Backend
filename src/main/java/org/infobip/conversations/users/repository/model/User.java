@@ -2,13 +2,15 @@ package org.infobip.conversations.users.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.BatchSize;
-import org.infobip.conversations.company.repository.model.Company;
+import org.infobip.conversations.communications.repository.model.Communication;
+import org.infobip.conversations.companies.repository.model.Company;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -73,6 +75,10 @@ public class User {
       inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
    @BatchSize(size = 20)
    private Set<Role> roles = new HashSet<>();
+
+   @OneToMany(cascade = CascadeType.ALL)
+   @JoinColumn(name = "id")
+   private Set<Communication> communicationList = new HashSet<>();
 
    public Long getId() {
       return id;
@@ -185,5 +191,13 @@ public class User {
 
    public void setCompany(Company company) {
       this.company = company;
+   }
+
+   public Set<Communication> getCommunicationList() {
+      return communicationList;
+   }
+
+   public void setCommunicationList(Set<Communication> communicationList) {
+      this.communicationList = communicationList;
    }
 }

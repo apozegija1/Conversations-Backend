@@ -1,10 +1,10 @@
-package org.infobip.conversations.company.rest;
+package org.infobip.conversations.companies.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
-import org.infobip.conversations.company.repository.model.Company;
-import org.infobip.conversations.company.repository.model.CompanyRepository;
-import org.infobip.conversations.company.service.CompanyService;
+import org.infobip.conversations.companies.repository.model.Company;
+import org.infobip.conversations.companies.repository.model.CompanyRepository;
+import org.infobip.conversations.companies.service.CompanyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +35,6 @@ public class CompanyController {
            .setResult(companyRepository.save(company)), HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<Response> update(@RequestBody Company company) {
-        Optional<Company> dbAdmin = companyRepository.findById(company.getId());
-
-        return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-           .setResult(companyRepository.save(company)), HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Response> read(@PathVariable Long id) {
         logger.info("id : " + id);
@@ -56,5 +48,17 @@ public class CompanyController {
            .setResult(companyRepository.findAll(pageable)), HttpStatus.OK);
     }
 
+   @PutMapping
+   public ResponseEntity<Response> update(@RequestBody Company company) {
+      Optional<Company> dbAdmin = companyRepository.findById(company.getId());
+
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+         .setResult(companyRepository.save(company)), HttpStatus.OK);
+   }
+
+   @DeleteMapping("/{id}")
+   public void delete(@PathVariable Long id) {
+      companyRepository.deleteById(id);
+   }
 
 }

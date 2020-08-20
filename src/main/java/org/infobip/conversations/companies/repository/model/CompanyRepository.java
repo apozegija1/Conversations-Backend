@@ -1,4 +1,4 @@
-package org.infobip.conversations.company.repository.model;
+package org.infobip.conversations.companies.repository.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
