@@ -1,6 +1,8 @@
 package org.infobip.conversations.users.rest;
 
+import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,9 @@ public class UserRestController {
 
    private final UserService userService;
 
+   @Autowired
+   private UserRepository userRepository;
+
    public UserRestController(UserService userService) {
       this.userService = userService;
    }
@@ -26,6 +31,6 @@ public class UserRestController {
 
    @GetMapping("/users")
    public ResponseEntity<List<User>> get() {
-      return ResponseEntity.ok(userService.get());
+      return ResponseEntity.ok(userRepository.findAll());
    }
 }
