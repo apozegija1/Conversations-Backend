@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
 @RestController
-@RequestMapping(value = "/api/communicationtype")
+@RequestMapping(value = "/api/communicationtypes")
 public class CommunicationTypeController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
 @RestController
-@RequestMapping(value = "/api/communicationreview")
+@RequestMapping(value = "/api/communicationreviews")
 public class CommunicationReviewController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
