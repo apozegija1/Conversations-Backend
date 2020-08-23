@@ -3,7 +3,7 @@ package org.infobip.conversations.companies.rest;
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.companies.repository.model.Company;
-import org.infobip.conversations.companies.repository.model.CompanyRepository;
+import org.infobip.conversations.companies.repository.CompanyRepository;
 import org.infobip.conversations.companies.service.CompanyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,5 +60,4 @@ public class CompanyController {
    public void delete(@PathVariable Long id) {
       companyRepository.deleteById(id);
    }
-
 }

@@ -42,7 +42,6 @@ public class UserModelDetailsService implements UserDetailsService {
             .orElseThrow(() -> new UsernameNotFoundException("User with email " + login + " was not found in the database"));
       }
 
-      // String lowercaseLogin = login.toLowerCase(Locale.ENGLISH);
       return userRepository.findOneWithAuthoritiesByUsername(login)
          .map(user -> createSpringSecurityUser(login, user))
          .orElseThrow(() -> new UsernameNotFoundException("User " + login + " was not found in the database"));

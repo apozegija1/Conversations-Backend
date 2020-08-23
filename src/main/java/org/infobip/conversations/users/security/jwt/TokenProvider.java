@@ -33,7 +33,6 @@ public class TokenProvider implements InitializingBean {
 
    private Key key;
 
-
    public TokenProvider(
       @Value("${jwt.base64-secret}") String base64Secret,
       @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,

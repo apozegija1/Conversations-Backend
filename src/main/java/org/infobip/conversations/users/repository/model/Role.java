@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
+@Cacheable(false)
 @Table(name = "roles")
 public class Role {
 

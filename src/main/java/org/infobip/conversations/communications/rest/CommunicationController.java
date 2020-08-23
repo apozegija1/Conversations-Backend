@@ -3,7 +3,7 @@ package org.infobip.conversations.communications.rest;
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.communications.repository.model.Communication;
-import org.infobip.conversations.communications.repository.model.CommunicationRepository;
+import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.infobip.conversations.communications.service.CommunicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

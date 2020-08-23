@@ -1,5 +1,6 @@
 package org.infobip.conversations.config;
 
+import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.security.JwtAccessDeniedHandler;
 import org.infobip.conversations.users.security.JwtAuthenticationEntryPoint;
 import org.infobip.conversations.users.security.jwt.JWTConfigurer;
@@ -93,12 +94,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
          .authorizeRequests()
          .antMatchers("/api/authenticate").permitAll()
          .antMatchers("/api/register").permitAll()
+         .antMatchers(HttpMethod.GET,  "/api/companies/**").hasAnyAuthority(String.valueOf(AvailableRoles.SuperAdmin), String.valueOf(AvailableRoles.CompanyAdmin))
+         .antMatchers("/api/companies").hasAuthority(String.valueOf(AvailableRoles.SuperAdmin))
+         //{accountId:\\d+}
+         .antMatchers("/api/users").hasAnyAuthority(String.valueOf(AvailableRoles.SuperAdmin), String.valueOf(AvailableRoles.CompanyAdmin))
+         .antMatchers("/api/user").authenticated()
          // .antMatchers("/api/activate").permitAll()
          // .antMatchers("/api/account/reset-password/init").permitAll()
          // .antMatchers("/api/account/reset-password/finish").permitAll()
-
-         // .antMatchers("/api/p").hasAuthority(String.valueOf(AvailableRoles.User))
-         // .antMatchers("/api/hiddenmessage").hasAnyAuthority(String.valueOf(AvailableRoles.SuperAdmin), String.valueOf(AvailableRoles.CompanyAdmin))
          // All other requests must specify token
          .anyRequest().authenticated()
 

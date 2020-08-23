@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 
 @Entity
+@Cacheable(false)
 @Table(name = "communications")
 public class Communication {
 

@@ -1,6 +1,7 @@
 package org.infobip.conversations.users.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.companies.repository.model.Company;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Cacheable(false)
 @Table(name = "users")
 public class User {
 
@@ -28,7 +30,6 @@ public class User {
    @Size(min = 4, max = 50)
    private String username;
 
-   @JsonIgnore
    @Column(name = "password", length = 100)
    @NotNull
    @Size(min = 4, max = 100)
@@ -95,11 +96,13 @@ public class User {
    public void setUsername(String username) {
       this.username = username;
    }
-
+   // Ignore password when we return user as we don't want to expose password hash to requests by user
+   @JsonIgnore
    public String getPassword() {
       return password;
    }
-
+   // Add ability for user to send password
+   @JsonProperty
    public void setPassword(String password) {
       this.password = password;
    }

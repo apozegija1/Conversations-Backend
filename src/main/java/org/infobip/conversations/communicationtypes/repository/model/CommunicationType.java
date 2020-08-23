@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Cacheable(false)
 @Table(name = "communicationtypes")
 public class CommunicationType {
 

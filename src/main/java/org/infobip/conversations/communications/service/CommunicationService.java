@@ -1,6 +1,6 @@
 package org.infobip.conversations.communications.service;
 
-import org.infobip.conversations.communications.repository.model.CommunicationRepository;
+import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

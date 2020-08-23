@@ -1,6 +1,6 @@
 package org.infobip.conversations.communicationreviews.service;
 
-import org.infobip.conversations.communicationreviews.model.CommunicationReviewRepository;
+import org.infobip.conversations.communicationreviews.repository.CommunicationReviewRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

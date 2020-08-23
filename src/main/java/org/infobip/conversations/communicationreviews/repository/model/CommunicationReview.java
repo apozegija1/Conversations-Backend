@@ -1,4 +1,4 @@
-package org.infobip.conversations.communicationreviews.model;
+package org.infobip.conversations.communicationreviews.repository.model;
 
 import org.infobip.conversations.communications.repository.model.Communication;
 
@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
+@Cacheable(false)
 @Table(name = "communicationreviews")
 public class CommunicationReview {
 

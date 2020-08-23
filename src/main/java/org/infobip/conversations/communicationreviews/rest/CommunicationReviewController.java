@@ -2,8 +2,8 @@ package org.infobip.conversations.communicationreviews.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
-import org.infobip.conversations.communicationreviews.model.CommunicationReview;
-import org.infobip.conversations.communicationreviews.model.CommunicationReviewRepository;
+import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
+import org.infobip.conversations.communicationreviews.repository.CommunicationReviewRepository;
 import org.infobip.conversations.communicationreviews.service.CommunicationReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +60,4 @@ public class CommunicationReviewController {
    public void delete(@PathVariable Long id) {
       communicationReviewRepository.deleteById(id);
    }
-
-
 }
