@@ -50,8 +50,9 @@ public class UserRestController {
 
    @PostMapping("/users/role/{roleName}")
    public ResponseEntity<Response> createUserWithRole(@RequestBody User user, @PathVariable String roleName) {
+      User savedUser = userService.saveUserWithRole(user, roleName);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-         .setResult(userService.saveUserWithRole(user, roleName)), HttpStatus.OK);
+         .setResult(savedUser), HttpStatus.OK);
    }
 
    @PutMapping

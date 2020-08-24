@@ -2,6 +2,7 @@ package org.infobip.conversations.users.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.istack.Nullable;
 import org.hibernate.annotations.BatchSize;
 import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.companies.repository.model.Company;
@@ -52,11 +53,11 @@ public class User {
 
    @Column(name = "phone", length = 50)
    @Size(min = 4, max = 50)
-   @Null
+   @Nullable
    private String phone;
 
    @Column(name = "gender", length = 50)
-   @Null
+   @Nullable
    @Size(min = 4, max = 50)
    private String gender;
 

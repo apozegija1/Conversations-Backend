@@ -1,8 +1,14 @@
 package org.infobip.conversations.users.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.infobip.conversations.common.Response;
+import org.infobip.conversations.common.ResultCode;
+import org.infobip.conversations.users.AvailableRoles;
+import org.infobip.conversations.users.repository.model.User;
+import org.infobip.conversations.users.rest.dto.JwtToken;
 import org.infobip.conversations.users.security.jwt.JWTFilter;
 import org.infobip.conversations.users.security.jwt.TokenProvider;
+import org.infobip.conversations.users.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,13 +16,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.infobip.conversations.users.rest.dto.AuthDto;
 
 import javax.validation.Valid;
+
+import static org.infobip.conversations.common.Constant.SUCCESS;
 
 /**
  * Controller to authenticate users.
@@ -29,13 +34,18 @@ public class AuthenticationRestController {
 
    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-   public AuthenticationRestController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+   private final UserService userService;
+
+   public AuthenticationRestController(TokenProvider tokenProvider,
+                                       AuthenticationManagerBuilder authenticationManagerBuilder,
+                                       UserService userService) {
       this.tokenProvider = tokenProvider;
       this.authenticationManagerBuilder = authenticationManagerBuilder;
+      this.userService = userService;
    }
 
    @PostMapping("/authenticate")
-   public ResponseEntity<JWTToken> authorize(@Valid @RequestBody AuthDto authDto) {
+   public ResponseEntity<JwtToken> authorize(@Valid @RequestBody AuthDto authDto) {
 
       UsernamePasswordAuthenticationToken authenticationToken =
          new UsernamePasswordAuthenticationToken(authDto.getUsername(), authDto.getPassword());
@@ -49,27 +59,13 @@ public class AuthenticationRestController {
       HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
-      return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
+      return new ResponseEntity<>(new JwtToken(jwt), httpHeaders, HttpStatus.OK);
    }
 
-   /**
-    * Object to return as body in JWT Authentication.
-    */
-   static class JWTToken {
-
-      private String idToken;
-
-      JWTToken(String idToken) {
-         this.idToken = idToken;
-      }
-
-      @JsonProperty("token")
-      String getIdToken() {
-         return idToken;
-      }
-
-      void setIdToken(String idToken) {
-         this.idToken = idToken;
-      }
+   @PostMapping("/register")
+   public ResponseEntity<Response> register(@RequestBody User user) {
+      User savedUser = userService.saveUserWithRole(user, AvailableRoles.User.name());
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+         .setResult(savedUser), HttpStatus.OK);
    }
 }

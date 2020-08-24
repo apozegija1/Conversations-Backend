@@ -40,36 +40,42 @@ public class UserService {
    }
 
    public User saveUserWithRole(User user, String roleName) {
-      Optional<User> oCurrentUser = this.getUserWithAuthorities();
-      if(oCurrentUser.isEmpty()) {
-         throw new IllegalArgumentException("Invalid user");
+      Optional<User> existingUser = this.userRepository.findByUsername(user.getUsername());
+      if (existingUser.isPresent()) {
+         throw new IllegalArgumentException("User with specified username already exists. Choose another username");
       }
-
-      User currentUser = oCurrentUser.get();
-      user.setRoles(this.getRolesByCurrentUser(currentUser, roleName));
+      Optional<User> oCurrentUser = this.getUserWithAuthorities();
+      user.setRoles(this.getRolesByCurrentUser(oCurrentUser, roleName));
       user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
       // For now set activated by default until we enable email activation
       user.setActivated(true);
       return userRepository.save(user);
    }
 
-   private Set<Role> getRolesByCurrentUser(User currentUser, String roleName) {
-      Set<Role> currentUserRoles = currentUser.getRoles();
-      Optional<Role> userRoleCompanyAdmin = currentUserRoles.stream()
-         .filter(r -> AvailableRoles.CompanyAdmin.name().equals(r.getName()))
-         .findFirst();
-
-      // If user is company admin he can add only agents
-      if (userRoleCompanyAdmin.isPresent()) {
-         Optional<Role> userRoleSuperAdmin = currentUserRoles.stream()
-            .filter(r -> AvailableRoles.SuperAdmin.name().equals(r.getName()))
+   private Set<Role> getRolesByCurrentUser(Optional<User> oCurrentUser, String roleName) {
+      // If current user is empty then someone is trying to register who isn't in our system so it is basic user
+      if (oCurrentUser.isEmpty()) {
+         roleName = AvailableRoles.User.name();
+      } else {
+         User currentUser = oCurrentUser.get();
+         Set<Role> currentUserRoles = currentUser.getRoles();
+         Optional<Role> userRoleCompanyAdmin = currentUserRoles.stream()
+            .filter(r -> AvailableRoles.CompanyAdmin.name().equals(r.getName()))
             .findFirst();
-         // Assign agent role if current user is not super admin as super admin can add any role but company admin only agent
-         if (userRoleSuperAdmin.isEmpty()) {
-            roleName = AvailableRoles.Agent.name();
-         }
 
+         // If user is company admin he can add only agents
+         if (userRoleCompanyAdmin.isPresent()) {
+            Optional<Role> userRoleSuperAdmin = currentUserRoles.stream()
+               .filter(r -> AvailableRoles.SuperAdmin.name().equals(r.getName()))
+               .findFirst();
+            // Assign agent role if current user is not super admin as super admin can add any role but company admin only agent
+            if (userRoleSuperAdmin.isEmpty()) {
+               roleName = AvailableRoles.Agent.name();
+            }
+
+         }
       }
+
       Optional<Role> oRole = roleRepository.findOneByName(roleName);
 
       if (oRole.isEmpty()) {

@@ -1,6 +1,7 @@
 package org.infobip.conversations.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
@@ -21,5 +22,13 @@ public class Response implements Serializable {
    public Response setResult(Object data) {
       this.data = data;
       return this;
+   }
+
+   public HttpStatus getHttpStatusFromResult() {
+      if (status == ResultCode.SUCCESS) {
+         return HttpStatus.OK;
+      }
+
+      return HttpStatus.BAD_REQUEST;
    }
 }
