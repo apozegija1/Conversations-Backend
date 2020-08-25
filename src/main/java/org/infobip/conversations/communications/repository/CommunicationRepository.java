@@ -11,11 +11,11 @@ import java.util.List;
 @Repository
 public interface CommunicationRepository extends JpaRepository<Communication, Long> {
 
-   @Query("SELECT t.type, CONCAT_WS(' ', ua.first_name, ua.last_name) AS agent, CONCAT_WS(' ', uc.first_name, uc.last_name) AS customer, c.start_time, c.end_time, c.text " +
-      "FROM  communicationtypes t, communications c, users ua, users uc " +
-      "WHERE t.id = c.type_id AND uc.id = c.customer_id AND ua.id = c.agent_id " +
-      "AND (c.agent_id = ?1 OR c.customer_id = ?2)")
+   @Query("SELECT c " +
+      "FROM  CommunicationType t, Communication c, User ua, User uc " +
+      "WHERE t.id = c.type.id AND uc.id = c.customer.id AND ua.id = c.agent.id " +
+      "AND (c.agent.id = ?1 OR c.customer.id = ?2)")
       //if agent is null, we will get all communications for a specific user,
       //and if customer is null, we will get all communications for agent
-    List<Object> findAllCommunicationsForUser(String agent_id, String customer_id);
+    List<Communication> findAllCommunicationsForUser(Long agentId, Long customerId);
 }

@@ -10,9 +10,9 @@ public class Response implements Serializable {
 
    private static final long serialVersionUID = 6474479867580063500L;
 
-   private ResultCode status;
-   private Object data;
-   private String message;
+   public ResultCode status;
+   public Object data;
+   public String message;
 
    public Response(ResultCode status, String message) {
       this.status = status;
@@ -22,13 +22,5 @@ public class Response implements Serializable {
    public Response setResult(Object data) {
       this.data = data;
       return this;
-   }
-
-   public HttpStatus getHttpStatusFromResult() {
-      if (status == ResultCode.SUCCESS) {
-         return HttpStatus.OK;
-      }
-
-      return HttpStatus.BAD_REQUEST;
    }
 }
