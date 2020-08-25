@@ -2,20 +2,16 @@ package org.infobip.conversations.users.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
-import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
-import org.infobip.conversations.companies.repository.model.Company;
 import org.infobip.conversations.users.repository.UserRepository;
-import org.infobip.conversations.users.repository.model.Role;
+import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.infobip.conversations.users.repository.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
 

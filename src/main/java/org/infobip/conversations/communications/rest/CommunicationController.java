@@ -2,8 +2,8 @@ package org.infobip.conversations.communications.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
-import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
+import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.communications.service.CommunicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
@@ -62,5 +63,15 @@ public class CommunicationController {
    }
 
 
+   // If agent is null, we will get all communications for a specific user
+   // If customer is null, we will get all communications for agent
+
+   @GetMapping("/agent={agentId}/customer={customerId}")
+   @ResponseBody
+   public ResponseEntity<Response> getAllCommunicationsForUser(@PathVariable String agentId, @PathVariable String customerId) {
+       List<Object> list =  communicationRepository.findAllCommunicationsForUser(agentId, customerId);
+       ResponseEntity<Response> response = new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list),HttpStatus.OK);
+       return response;
+   }
 
 }
