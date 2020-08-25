@@ -51,25 +51,25 @@ public class UserRestController {
          .setResult(savedUser), HttpStatus.OK);
    }
 
-   @PutMapping
+   @PutMapping("/users")
    public ResponseEntity<Response> update(@RequestBody User user) {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(userRepository.save(user)), HttpStatus.OK);
    }
 
-   @GetMapping("/{id}")
+   @GetMapping("/users/{id}")
    public ResponseEntity<Response> read(@PathVariable Long id) {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(userRepository.findById(id)), HttpStatus.OK);
    }
 
-   @GetMapping
+   @GetMapping("/users")
    public ResponseEntity<Response> readAll(Pageable pageable) {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(userRepository.findAll(pageable)), HttpStatus.OK);
    }
 
-   @DeleteMapping("/{id}")
+   @DeleteMapping("/users/{id}")
    public void delete(@PathVariable Long id) {
       userRepository.deleteById(id);
    }
