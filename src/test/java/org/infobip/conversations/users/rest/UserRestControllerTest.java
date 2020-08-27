@@ -17,6 +17,10 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
    public void setUp() {
       SecurityContextHolder.clearContext();
    }
+   /*@Before
+   public void setUp() {
+      SecurityContextHolder.clearContext();
+   }
 
    @Test
    public void getActualUserForUserWithToken() throws Exception {
@@ -39,11 +43,11 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
          ));
    }
 
+   */
    @Test
    public void getActualUserForUserWithoutToken() throws Exception {
       getMockMvc().perform(get("/api/user")
          .contentType(MediaType.APPLICATION_JSON))
          .andExpect(status().isUnauthorized());
    }
-
 }

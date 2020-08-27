@@ -22,7 +22,7 @@ public class CommunicationReview {
    @NotNull
    private Date date;
 
-   @OneToOne(cascade = CascadeType.ALL)
+   @OneToOne
    @JoinColumn(name = "communication_id")
    @NotNull
    private Communication communication;
