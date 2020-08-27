@@ -10,3 +10,7 @@ INSERT INTO userroles (user_id, role_id) VALUES (1, 2) WHERE NOT EXISTS (SELECT 
 INSERT INTO users (id, username, password, first_name, last_name, email, gender, phone, company_id, activated) VALUES (2, 'admin', '$2a$08$lDnHPz7eUkSi6ao14Twuau08mzhWrL4kyZGGU5xfiGALO/Vxd5DOi', 'admin', 'admin', 'admin@admin.ba', null, null, null,  1);
 
 INSERT INTO userroles (user_id, role_id) VALUES (2, 2);
+
+
+INSERT INTO communicationtypes (id, type) VALUES (1, 'SMS');
+INSERT INTO communicationtypes (id, type) VALUES (2, 'Video');

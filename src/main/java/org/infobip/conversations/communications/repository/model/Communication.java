@@ -21,18 +21,18 @@ public class Communication {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-   @ManyToOne(cascade = CascadeType.ALL)
-   @JsonProperty("agent_id")
+   @ManyToOne
+   @JsonProperty("agent")
    @JoinColumn(name = "agent_id")
    private User agent;
 
-   @ManyToOne(cascade = CascadeType.ALL)
-   @JsonProperty("customer_id")
+   @ManyToOne
+   @JsonProperty("customer")
    @JoinColumn(name = "customer_id")
    private User customer;
 
-   @ManyToOne(cascade = CascadeType.ALL)
-   @JsonProperty("type_id")
+   @ManyToOne
+   @JsonProperty("type")
    @JoinColumn(name = "type_id")
    private CommunicationType type;
 

@@ -61,7 +61,7 @@ public class User {
    @Size(min = 4, max = 50)
    private String gender;
 
-   @OneToOne(cascade = CascadeType.ALL)
+   @OneToOne
    @JoinColumn(name = "company_id", referencedColumnName = "id")
    private Company company;
 
