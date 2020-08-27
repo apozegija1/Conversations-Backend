@@ -2,6 +2,7 @@ package org.infobip.conversations.communications.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
 import org.infobip.conversations.communicationtypes.repository.model.CommunicationType;
 import org.infobip.conversations.users.repository.model.User;
 
