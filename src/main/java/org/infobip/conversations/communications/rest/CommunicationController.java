@@ -106,7 +106,7 @@ public class CommunicationController {
       //2. avg duration for company
       //3. avg duration for date range
       //4. avg duration for agents in company in specific date range
-
+//date se prosljeđuje u formatu: yyyy-mm-dd hh:mm:ss.sss, npr: 2012-05-16 00:00:00.000
    @GetMapping("/statistics/avgduration")
    public ResponseEntity<Response> getAverageDuration(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
