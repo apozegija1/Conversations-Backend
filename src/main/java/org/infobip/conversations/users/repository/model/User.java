@@ -78,10 +78,6 @@ public class User {
    @BatchSize(size = 20)
    private Set<Role> roles = new HashSet<>();
 
-   @OneToMany(cascade = CascadeType.ALL)
-   @JoinColumn(name = "id")
-   private Set<Communication> communicationList = new HashSet<>();
-
    public Long getId() {
       return id;
    }
@@ -197,11 +193,5 @@ public class User {
       this.company = company;
    }
 
-   public Set<Communication> getCommunicationList() {
-      return communicationList;
-   }
 
-   public void setCommunicationList(Set<Communication> communicationList) {
-      this.communicationList = communicationList;
-   }
 }

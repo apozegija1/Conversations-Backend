@@ -2,6 +2,8 @@ package org.infobip.conversations.users.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
+import org.infobip.conversations.common.utils.LongUtils;
+import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
@@ -72,5 +75,13 @@ public class UserRestController {
    @DeleteMapping("/users/{id}")
    public void delete(@PathVariable Long id) {
       userRepository.deleteById(id);
+   }
+
+   //all users in company
+   @GetMapping("/users/company")
+   public ResponseEntity<Response> getAllUsersForCompany(@RequestParam Map<String, String> queryParameters) {
+      Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
+      List<User> list = userRepository.findAllUsersForCompany(companyId);
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
    }
 }
