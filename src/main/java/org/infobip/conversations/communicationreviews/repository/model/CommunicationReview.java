@@ -1,5 +1,7 @@
 package org.infobip.conversations.communicationreviews.repository.model;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.infobip.conversations.communications.repository.model.Communication;
 
@@ -23,9 +25,9 @@ public class CommunicationReview {
    @NotNull
    private Timestamp date;
 
+   @JsonProperty("communication")
    @OneToOne
-   @JoinColumn(name = "communication_id")
-   @NotNull
+   @JoinColumn(name = "communication_id", referencedColumnName = "id", columnDefinition="integer")
    private Communication communication;
 
    @Column(name = "rating")
