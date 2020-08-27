@@ -17,13 +17,10 @@ public class Company {
    private Long id;
 
    @Column(name = "name", length = 50, unique = true)
-   @NotNull
    @Size(min = 4, max = 50)
    private String name;
 
-   @JsonIgnore
    @Column(name = "address", length = 150)
-   @NotNull
    @Size(min = 4, max = 150)
    private String address;
 
