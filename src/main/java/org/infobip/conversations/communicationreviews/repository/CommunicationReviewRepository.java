@@ -1,7 +1,6 @@
 package org.infobip.conversations.communicationreviews.repository;
 
 import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
-import org.infobip.conversations.communications.repository.model.Communication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -27,12 +26,13 @@ public interface CommunicationReviewRepository extends JpaRepository<Communicati
 
    List<CommunicationReview> findAllReviewsForUserByUsername(String agentUsername, String customerUsername);
 
-   @Query("SELECT AVG(cr.rating) AS Average, ct.type " +
-      "FROM CommunicationReview cr, Communication cm, User ua, User uc, Company cp, CommunicationType ct " +
-      "WHERE cr.communication.id = cm.id AND cm.agent.id = ua.id AND cm.customer.id = ua.id " +
-      "AND ua.company.id = cp.id AND cm.type.id = ct.id " +
+
+   @Query(value = "SELECT AVG(cr.rating) " +
+      "FROM communicationreviews cr, communications cm, users ua, users uc, companies cp, communicationtypes ct " +
+      "WHERE cr.communication_id = cm.id AND cm.agent_id = ua.id AND cm.customer_id = ua.id " +
+      "AND ua.company_id = cp.id AND cm.type_id = ct.id " +
       "AND (cp.id = ?1 OR ct.id = ?2) " +
-      "GROUP BY ct.type")
+      "GROUP BY ct.type", nativeQuery = true)
 
    Float findAverageRatingForCompany(Long companyId, Long typeId);
 }
