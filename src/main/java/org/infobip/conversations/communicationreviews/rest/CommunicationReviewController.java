@@ -94,7 +94,7 @@ public class CommunicationReviewController {
    public ResponseEntity<Response> getAverageRatingForCompanyByCommunicationType(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
       Long typeId = LongUtils.stringToLong(queryParameters.getOrDefault("typeId", null));
-      Float average = communicationReviewRepository.findAverageRatingForCompany(companyId, typeId);
+      Float average = communicationReviewRepository.findAverageRatingForCompanybyCommunicationType(companyId, typeId);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 

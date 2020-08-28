@@ -34,5 +34,5 @@ public interface CommunicationReviewRepository extends JpaRepository<Communicati
       "AND (cp.id = ?1 OR ct.id = ?2) " +
       "GROUP BY ct.type", nativeQuery = true)
 
-   Float findAverageRatingForCompany(Long companyId, Long typeId);
+   Float findAverageRatingForCompanybyCommunicationType(Long companyId, Long typeId);
 }

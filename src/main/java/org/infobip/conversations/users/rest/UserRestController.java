@@ -4,6 +4,8 @@ import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.common.utils.LongUtils;
 import org.infobip.conversations.communications.repository.model.Communication;
+import org.infobip.conversations.companies.repository.CompanyRepository;
+import org.infobip.conversations.companies.repository.model.Company;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
@@ -26,6 +29,7 @@ public class UserRestController {
 
    @Autowired
    private UserRepository userRepository;
+   private CompanyRepository companyRepository;
 
    public UserRestController(UserService userService) {
       this.userService = userService;
@@ -78,10 +82,10 @@ public class UserRestController {
    }
 
    //all users in company
-   @GetMapping("/users/company")
-   public ResponseEntity<Response> getAllUsersForCompany(@RequestParam Map<String, String> queryParameters) {
-      Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
-      List<User> list = userRepository.findAllUsersForCompany(companyId);
+   @GetMapping("/users/company/{id}")
+   public ResponseEntity<Response> getAllUsersForCompany(@PathVariable Long id) {
+      List<User> list = userRepository.findAllUsersForCompany(id);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
    }
+
 }

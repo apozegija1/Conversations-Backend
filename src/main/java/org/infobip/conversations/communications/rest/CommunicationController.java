@@ -79,13 +79,6 @@ public class CommunicationController {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
    }
 
-   @GetMapping("/usersByUsername")
-   public ResponseEntity<Response> getAllCommunicationsForUserByUsername(@RequestParam Map<String, String> queryParameters) {
-      String agentUsername = queryParameters.getOrDefault("agentUsername", null);
-      String customerUsername = queryParameters.getOrDefault("customerUsername", null);
-      List<Communication> list = communicationRepository.findAllCommunicationsForUserByUsername(agentUsername, customerUsername);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
-   }
 
    //all communications for company
    @GetMapping("/company")
@@ -119,7 +112,7 @@ public class CommunicationController {
    // number of calls in specific date range for one company (frequency)
 
    @GetMapping("/statistics/count")
-   public ResponseEntity<Response> getCommunicationCount(@RequestParam Map<String, String> queryParameters) {
+   public ResponseEntity<Response> getCommunicationCountForPeriod(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
       Long agentId = LongUtils.stringToLong(queryParameters.getOrDefault("agentId", null));
       Timestamp fromDate = Timestamp.valueOf((queryParameters.getOrDefault("fromDate", null)));
