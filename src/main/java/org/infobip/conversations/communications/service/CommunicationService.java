@@ -11,9 +11,7 @@ import org.infobip.conversations.users.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -31,35 +29,40 @@ public class CommunicationService {
       this.userService = userService;
    }
 
-   List<UserCommunication> findAllCommunicationsForUser(Long agentId, Long customerId) {
-      boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
-      boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
-      boolean isCustomerUser = SecurityUtils.loggedInUserHasRole(AvailableRoles.User);
-      List<UserCommunication> userCommunications = new ArrayList<>();
+   public List<UserCommunication> findAllCommunicationsForUser() throws Exception {
+      Optional<User> oCurrentUser = this.userService.getUserWithAuthorities();
+      if (oCurrentUser.isEmpty()) {
+         throw new Exception("Trying to get communication for wrong user");
+      }
+
+      User currentUser = oCurrentUser.get();
+      boolean isAgent = SecurityUtils.userHasRole(currentUser, AvailableRoles.Agent);
+      boolean isCompanyAdmin = SecurityUtils.userHasRole(currentUser, AvailableRoles.CompanyAdmin);
+      boolean isCustomerUser = SecurityUtils.userHasRole(currentUser, AvailableRoles.User);
+      Map<User, List<Communication>> userCommunicationsMapping = new HashMap<>();
       if (isAgent || isCompanyAdmin) {
-         List<Communication> communications;
+         List<Communication> communications = new ArrayList<>();
          if (isAgent) {
-            communications = communicationRepository.findAllCommunicationsForUser(agentId, null);
+            communications = communicationRepository.findAllCommunicationsForUser(currentUser.getId(), null);
          } else {
             Company adminCompany = this.userService.getCurrentUserCompany();
-            communications = communicationRepository.findAllCommunicationsForCompany(adminCompany.getId());
+            if (adminCompany != null) {
+               communications = communicationRepository.findAllCommunicationsForCompany(adminCompany.getId());
+            }
          }
 
-         userCommunications = communications.stream()
-            .collect(groupingBy(Communication::getAgent))
-            .entrySet()
-            .stream()
-            .map((s-> new UserCommunication(s.getKey(), s.getValue())))
-            .collect(toList());
+         userCommunicationsMapping = communications.stream()
+            .collect(groupingBy(Communication::getAgent));
       } else if (isCustomerUser) {
-         List<Communication> list = communicationRepository.findAllCommunicationsForUser(null, customerId);
-         userCommunications = list.stream()
-            .collect(groupingBy(Communication::getCustomer))
-            .entrySet()
-            .stream()
-            .map((s-> new UserCommunication(s.getKey(), s.getValue())))
-            .collect(toList());
+         List<Communication> list = communicationRepository.findAllCommunicationsForUser(null, currentUser.getId());
+         userCommunicationsMapping = list.stream()
+            .collect(groupingBy(Communication::getCustomer));
       }
-      return userCommunications;
+
+      return userCommunicationsMapping
+         .entrySet()
+         .stream()
+         .map((s-> new UserCommunication(s.getKey(), s.getValue())))
+         .collect(toList());
    }
 }

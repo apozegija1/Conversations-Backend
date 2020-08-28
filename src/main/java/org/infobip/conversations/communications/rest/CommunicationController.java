@@ -3,6 +3,7 @@ package org.infobip.conversations.communications.rest;
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.common.utils.LongUtils;
+import org.infobip.conversations.communications.models.UserCommunication;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.communications.service.CommunicationService;
@@ -67,16 +68,10 @@ public class CommunicationController {
       communicationRepository.deleteById(id);
    }
 
-
-   // If agent is null, we will get all communications for a specific user
-   // If customer is null, we will get all communications for agent
-
    @GetMapping("/users")
-   public ResponseEntity<Response> getAllCommunicationsForUser(@RequestParam Map<String, String> queryParameters) {
-       Long agentId = LongUtils.stringToLong(queryParameters.getOrDefault("agentId", null));
-       Long customerId = LongUtils.stringToLong(queryParameters.getOrDefault("customerId", null));
-       List<Communication> list = communicationRepository.findAllCommunicationsForUser(agentId, customerId);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
+   public ResponseEntity<Response> getAllCommunicationsForUser() throws Exception {
+       List<UserCommunication> userCommunications = communicationService.findAllCommunicationsForUser();
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(userCommunications), HttpStatus.OK);
    }
 
    @GetMapping("/usersByUsername")
