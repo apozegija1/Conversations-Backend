@@ -3,21 +3,26 @@ package org.infobip.conversations.users.rest;
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.common.utils.LongUtils;
+import org.infobip.conversations.common.utils.PageUtils;
 import org.infobip.conversations.communications.repository.model.Communication;
-import org.infobip.conversations.companies.repository.CompanyRepository;
-import org.infobip.conversations.companies.repository.model.Company;
+import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
+import org.infobip.conversations.users.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
@@ -29,7 +34,6 @@ public class UserRestController {
 
    @Autowired
    private UserRepository userRepository;
-   private CompanyRepository companyRepository;
 
    public UserRestController(UserService userService) {
       this.userService = userService;
@@ -71,21 +75,22 @@ public class UserRestController {
    }
 
    @GetMapping("/users")
-   public ResponseEntity<Response> readAll(Pageable pageable) {
+   public ResponseEntity<Response> readAll(Pageable pageable, @RequestParam Map<String, String> queryParameters) {
+      boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
+      boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
+      Page<User> users = null;
+      if (isSuperAdmin) {
+         users = userRepository.findAll(pageable);
+      } else if (isCompanyAdmin) {
+         Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
+         users = userRepository.findAllUsersForCompany(companyId, pageable);
+      }
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-         .setResult(userRepository.findAll(pageable)), HttpStatus.OK);
+         .setResult(users), HttpStatus.OK);
    }
 
    @DeleteMapping("/users/{id}")
    public void delete(@PathVariable Long id) {
       userRepository.deleteById(id);
    }
-
-   //all users in company
-   @GetMapping("/users/company/{id}")
-   public ResponseEntity<Response> getAllUsersForCompany(@PathVariable Long id) {
-      List<User> list = userRepository.findAllUsersForCompany(id);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
-   }
-
 }

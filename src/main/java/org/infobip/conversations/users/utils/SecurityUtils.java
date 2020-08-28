@@ -1,11 +1,14 @@
 package org.infobip.conversations.users.utils;
 
+import org.infobip.conversations.users.AvailableRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public class SecurityUtils {
@@ -39,5 +42,16 @@ public class SecurityUtils {
       LOG.debug("found username '{}' in security context", username);
 
       return Optional.ofNullable(username);
+   }
+
+   public static boolean loggedInUserHasRole(AvailableRoles role) {
+      Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)
+         SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getAuthorities();
+
+      boolean hasRole = authorities.stream()
+         .anyMatch(a -> a.getAuthority().equals(role.name()));
+      return hasRole;
    }
 }

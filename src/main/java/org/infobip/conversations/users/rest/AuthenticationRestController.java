@@ -1,6 +1,5 @@
 package org.infobip.conversations.users.rest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.users.AvailableRoles;

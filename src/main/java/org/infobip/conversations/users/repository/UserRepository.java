@@ -1,6 +1,8 @@
 package org.infobip.conversations.users.repository;
 
 import org.infobip.conversations.communications.repository.model.Communication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.infobip.conversations.users.repository.model.User;
@@ -25,5 +27,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "FROM User u, Company cp " +
       "WHERE u.company.id = cp.id " +
       "AND cp.id = ?1")
-    List<User> findAllUsersForCompany(Long companyId);
+   Page<User> findAllUsersForCompany(Long companyId, Pageable pageable);
 }
