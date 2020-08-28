@@ -34,6 +34,12 @@ public class UserService {
    }
 
    @Transactional(readOnly = true)
+   public Company getCurrentUserCompany() {
+      Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
+      return user.map(User::getCompany).orElse(null);
+   }
+
+   @Transactional(readOnly = true)
    public List<User> getCompanyUsers() {
       Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
       return new ArrayList<>();

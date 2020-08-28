@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -55,8 +56,25 @@ public class SecurityUtils {
          .anyMatch(a -> a.getAuthority().equals(role.name()));
    }
 
+   public static boolean loggedInUserHasAnyRole(AvailableRoles[] roles) {
+      Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)
+         SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getAuthorities();
+
+      return authorities.stream()
+         .anyMatch(a -> Arrays.stream(roles)
+            .anyMatch(passedRole -> passedRole.name().equals(a.getAuthority())));
+   }
+
    public static boolean userHasRole(User user, AvailableRoles role) {
       return user.getRoles().stream()
-         .anyMatch(r -> AvailableRoles.CompanyAdmin.name().equals(r.getName()));
+         .anyMatch(r -> role.name().equals(r.getName()));
+   }
+
+   public static boolean userHasAnyRole(User user, AvailableRoles[] roles) {
+      return user.getRoles().stream()
+         .anyMatch(r -> Arrays.stream(roles)
+            .anyMatch(passedRole -> passedRole.name().equals(r.getName())));
    }
 }
