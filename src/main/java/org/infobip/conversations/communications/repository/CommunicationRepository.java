@@ -20,13 +20,6 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
     List<Communication> findAllCommunicationsForUser(Long agentId, Long customerId);
 
 
-   @Query("SELECT c " +
-      "FROM  CommunicationType t, Communication c, User ua, User uc " +
-      "WHERE t.id = c.type.id AND uc.id = c.customer.id AND ua.id = c.agent.id " +
-      "AND (c.agent.username = ?1 OR c.customer.username = ?2)")
-
-   List<Communication> findAllCommunicationsForUserByUsername(String agentUsername, String customerUsername);
-
    @Query("SELECT cm " +
       "FROM Communication cm, User ua, User uc, Company cp " +
       "WHERE cm.agent.id = ua.id AND cm.customer.id = uc.id AND ua.company.id = cp.id " +
@@ -47,3 +40,4 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
    Long findCommunicationCountForPeriod(Long companyId, Long agentId, Timestamp fromDate, Timestamp toDate);
 
 }
+

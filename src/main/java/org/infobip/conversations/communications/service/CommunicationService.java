@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -40,6 +39,7 @@ public class CommunicationService {
       boolean isCompanyAdmin = SecurityUtils.userHasRole(currentUser, AvailableRoles.CompanyAdmin);
       boolean isCustomerUser = SecurityUtils.userHasRole(currentUser, AvailableRoles.User);
       Map<User, List<Communication>> userCommunicationsMapping = new HashMap<>();
+
       if (isAgent || isCompanyAdmin) {
          List<Communication> communications = new ArrayList<>();
          if (isAgent) {

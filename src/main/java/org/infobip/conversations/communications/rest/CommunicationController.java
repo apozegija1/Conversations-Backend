@@ -9,11 +9,15 @@ import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.communications.service.CommunicationService;
 import org.infobip.conversations.communicationtypes.repository.CommunicationTypeRepository;
 import org.infobip.conversations.communicationtypes.repository.model.CommunicationType;
+import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
+import org.infobip.conversations.users.service.UserService;
+import org.infobip.conversations.users.utils.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +38,7 @@ public class CommunicationController {
 
     @Autowired
     private CommunicationService communicationService;
+    private UserService userService;
 
     @Autowired
     private CommunicationRepository communicationRepository;
@@ -57,11 +62,11 @@ public class CommunicationController {
            .setResult(communicationRepository.findById(id)), HttpStatus.OK);
     }
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<Response> readAll(Pageable pageable) {
         return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
            .setResult(communicationRepository.findAll(pageable)), HttpStatus.OK);
-    }
+    }*/
 
    @DeleteMapping("/{id}")
    public void delete(@PathVariable Long id) {
@@ -74,22 +79,31 @@ public class CommunicationController {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(userCommunications), HttpStatus.OK);
    }
 
-   @GetMapping("/usersByUsername")
-   public ResponseEntity<Response> getAllCommunicationsForUserByUsername(@RequestParam Map<String, String> queryParameters) {
-      String agentUsername = queryParameters.getOrDefault("agentUsername", null);
-      String customerUsername = queryParameters.getOrDefault("customerUsername", null);
-      List<Communication> list = communicationRepository.findAllCommunicationsForUserByUsername(agentUsername, customerUsername);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
-   }
 
-   //all communications for company
-   @GetMapping("/company")
-   public ResponseEntity<Response> getAllCommunicationsForCompany(@RequestParam Map<String, String> queryParameters) {
-      Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
-      List<Communication> list = communicationRepository.findAllCommunicationsForCompany(companyId);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
-   }
+   //all communications for company by role
 
+   @GetMapping()
+   public ResponseEntity<Response> readAll() {
+      boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
+      boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
+      List<Communication> communications = null;
+      if (isSuperAdmin) {
+         communications = communicationRepository.findAll();
+      } else if (isCompanyAdmin) {
+         User user = this.userService.getUserWithAuthorities().get();
+         // Check company of the user and pass it to get users for company
+         if (user.getCompany() != null) {
+            communications = communicationRepository.findAllCommunicationsForCompany(user.getCompany().getId());
+         } else {
+            return ResponseEntity
+               .status(HttpStatus.BAD_REQUEST)
+               .body(new Response(ResultCode.ERROR, "Invalid user company"));
+         }
+      }
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+         .setResult(communications), HttpStatus.OK);
+   }
+   
    /*
     * STATISTICS ROUTES
     * */
@@ -114,7 +128,7 @@ public class CommunicationController {
    // number of calls in specific date range for one company (frequency)
 
    @GetMapping("/statistics/count")
-   public ResponseEntity<Response> getCommunicationCount(@RequestParam Map<String, String> queryParameters) {
+   public ResponseEntity<Response> getCommunicationCountForPeriod(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
       Long agentId = LongUtils.stringToLong(queryParameters.getOrDefault("agentId", null));
       Timestamp fromDate = Timestamp.valueOf((queryParameters.getOrDefault("fromDate", null)));
