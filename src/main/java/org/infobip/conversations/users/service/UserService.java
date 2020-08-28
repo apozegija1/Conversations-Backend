@@ -34,6 +34,12 @@ public class UserService {
    }
 
    @Transactional(readOnly = true)
+   public Company getCurrentUserCompany() {
+      Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
+      return user.map(User::getCompany).orElse(null);
+   }
+
+   @Transactional(readOnly = true)
    public List<User> getCompanyUsers() {
       Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
       return new ArrayList<>();
@@ -59,20 +65,15 @@ public class UserService {
       } else {
          User currentUser = oCurrentUser.get();
          Set<Role> currentUserRoles = currentUser.getRoles();
-         Optional<Role> userRoleCompanyAdmin = currentUserRoles.stream()
-            .filter(r -> AvailableRoles.CompanyAdmin.name().equals(r.getName()))
-            .findFirst();
+         boolean userRoleCompanyAdmin = SecurityUtils.userHasRole(currentUser, AvailableRoles.CompanyAdmin);
 
          // If user is company admin he can add only agents
-         if (userRoleCompanyAdmin.isPresent()) {
-            Optional<Role> userRoleSuperAdmin = currentUserRoles.stream()
-               .filter(r -> AvailableRoles.SuperAdmin.name().equals(r.getName()))
-               .findFirst();
+         if (userRoleCompanyAdmin) {
+            boolean hasSuperAdminRole = SecurityUtils.userHasRole(currentUser, AvailableRoles.SuperAdmin);
             // Assign agent role if current user is not super admin as super admin can add any role but company admin only agent
-            if (userRoleSuperAdmin.isEmpty()) {
+            if (!hasSuperAdminRole) {
                roleName = AvailableRoles.Agent.name();
             }
-
          }
       }
 

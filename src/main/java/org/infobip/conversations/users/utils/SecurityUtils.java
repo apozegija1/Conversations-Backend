@@ -1,6 +1,7 @@
 package org.infobip.conversations.users.utils;
 
 import org.infobip.conversations.users.AvailableRoles;
+import org.infobip.conversations.users.repository.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -50,8 +52,29 @@ public class SecurityUtils {
             .getAuthentication()
             .getAuthorities();
 
-      boolean hasRole = authorities.stream()
+      return authorities.stream()
          .anyMatch(a -> a.getAuthority().equals(role.name()));
-      return hasRole;
+   }
+
+   public static boolean loggedInUserHasAnyRole(AvailableRoles[] roles) {
+      Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)
+         SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getAuthorities();
+
+      return authorities.stream()
+         .anyMatch(a -> Arrays.stream(roles)
+            .anyMatch(passedRole -> passedRole.name().equals(a.getAuthority())));
+   }
+
+   public static boolean userHasRole(User user, AvailableRoles role) {
+      return user.getRoles().stream()
+         .anyMatch(r -> role.name().equals(r.getName()));
+   }
+
+   public static boolean userHasAnyRole(User user, AvailableRoles[] roles) {
+      return user.getRoles().stream()
+         .anyMatch(r -> Arrays.stream(roles)
+            .anyMatch(passedRole -> passedRole.name().equals(r.getName())));
    }
 }
