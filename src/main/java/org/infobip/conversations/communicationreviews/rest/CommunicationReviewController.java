@@ -91,7 +91,7 @@ public class CommunicationReviewController {
       //2. ratings for types
       //3. ratings for types in company
    @GetMapping("/statistics/company")
-   public ResponseEntity<Response> getAverageRatingForCompanyType(@RequestParam Map<String, String> queryParameters) {
+   public ResponseEntity<Response> getAverageRatingForCompanyByCommunicationType(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
       Long typeId = LongUtils.stringToLong(queryParameters.getOrDefault("typeId", null));
       Float average = communicationReviewRepository.findAverageRatingForCompany(companyId, typeId);
