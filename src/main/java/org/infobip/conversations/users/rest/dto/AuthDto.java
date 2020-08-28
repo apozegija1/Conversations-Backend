@@ -1,5 +1,7 @@
 package org.infobip.conversations.users.rest.dto;
 
+import org.infobip.conversations.common.validators.ValidPassword;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,6 +16,7 @@ public class AuthDto {
 
    @NotNull
    @Size(min = 4, max = 100)
+   @ValidPassword
    private String password;
 
    private Boolean rememberMe;
