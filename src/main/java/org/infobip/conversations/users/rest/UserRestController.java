@@ -19,10 +19,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
@@ -75,15 +72,22 @@ public class UserRestController {
    }
 
    @GetMapping("/users")
-   public ResponseEntity<Response> readAll(Pageable pageable, @RequestParam Map<String, String> queryParameters) {
+   public ResponseEntity<Response> readAll(Pageable pageable) {
       boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
       boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
       Page<User> users = null;
       if (isSuperAdmin) {
          users = userRepository.findAll(pageable);
       } else if (isCompanyAdmin) {
-         Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
-         users = userRepository.findAllUsersForCompany(companyId, pageable);
+         User user = this.userService.getUserWithAuthorities().get();
+         // Check company of the user and pass it to get users for company
+         if (user.getCompany() != null) {
+            users = userRepository.findAllUsersForCompany(user.getCompany().getId(), pageable);
+         } else {
+            return ResponseEntity
+               .status(HttpStatus.BAD_REQUEST)
+               .body(new Response(ResultCode.ERROR, "Invalid user company"));
+         }
       }
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(users), HttpStatus.OK);
