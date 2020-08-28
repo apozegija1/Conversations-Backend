@@ -8,12 +8,14 @@ import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
 import org.infobip.conversations.users.utils.SecurityUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -31,7 +33,7 @@ public class CommunicationService {
       this.userService = userService;
    }
 
-   List<UserCommunication> findAllCommunicationsForUser(Long agentId, Long customerId) {
+   List<UserCommunication> findAllCommunicationsForUser(Long agentId, Long customerId, Pageable pageable) {
       boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
       boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
       boolean isCustomerUser = SecurityUtils.loggedInUserHasRole(AvailableRoles.User);
@@ -62,4 +64,6 @@ public class CommunicationService {
       }
       return userCommunications;
    }
+
+
 }
