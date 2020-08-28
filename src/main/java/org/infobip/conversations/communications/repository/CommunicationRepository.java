@@ -44,6 +44,6 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "FROM communications cm, users ua, users uc, companies cp " +
       "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id " +
       "AND (cp.id = ?1 OR ua.id = ?2 OR (cm.start_time >= unix_timestamp(?3) AND cm.start_time < unix_timestamp(?4))) ", nativeQuery = true)
-   Long findCommunicationCount(Long companyId, Long agentId, Timestamp fromDate, Timestamp toDate);
+   Long findCommunicationCountForPeriod(Long companyId, Long agentId, Timestamp fromDate, Timestamp toDate);
 
 }

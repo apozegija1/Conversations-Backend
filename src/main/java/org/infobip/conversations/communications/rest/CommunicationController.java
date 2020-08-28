@@ -45,8 +45,6 @@ public class CommunicationController {
 
     @PutMapping
     public ResponseEntity<Response> update(@RequestBody Communication communication) {
-        //Optional<Communication> dbAdmin = communicationRepository.findById(communication.getId());
-
         return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
            .setResult(communicationRepository.save(communication)), HttpStatus.OK);
     }
@@ -127,7 +125,7 @@ public class CommunicationController {
       Timestamp fromDate = Timestamp.valueOf((queryParameters.getOrDefault("fromDate", null)));
       Timestamp toDate = Timestamp.valueOf((queryParameters.getOrDefault("toDate", null)));
 
-      Long average = communicationRepository.findCommunicationCount(companyId, agentId, fromDate, toDate);
+      Long average = communicationRepository.findCommunicationCountForPeriod(companyId, agentId, fromDate, toDate);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 }
