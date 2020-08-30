@@ -86,7 +86,8 @@ public class UserService {
    private void checkUserCompany(User user) {
       boolean isCompanyAdmin = SecurityUtils.userHasRole(user, AvailableRoles.CompanyAdmin);
       boolean isAgent = SecurityUtils.userHasRole(user, AvailableRoles.Agent);
-      if ((isCompanyAdmin || isAgent) && user.getCompany() == null) {
+      // If user is missing company or company passed is missing id throw error
+      if ((isCompanyAdmin || isAgent) && (user.getCompany() == null || user.getCompany().getId() == null)) {
          throw new IllegalArgumentException("User is missing company");
       }
    }

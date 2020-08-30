@@ -1,6 +1,7 @@
 package org.infobip.conversations.users.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.Nullable;
 import org.hibernate.annotations.BatchSize;
@@ -65,7 +66,10 @@ public class User {
    @Size(min = 3, max = 50)
    private String gender;
 
+   // Was getting some error with returning company in json serializer
+   // https://stackoverflow.com/questions/24994440/no-serializer-found-for-class-org-hibernate-proxy-pojo-javassist-javassist/52148725
    @OneToOne
+   @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
    @JoinColumn(name = "company_id", referencedColumnName = "id")
    private Company company;
 
