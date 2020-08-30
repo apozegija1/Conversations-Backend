@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.repository.UserRepository;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import javax.swing.text.html.Option;
 import java.util.*;
 
 @Service
@@ -34,9 +31,9 @@ public class UserService {
    }
 
    @Transactional(readOnly = true)
-   public List<User> getCompanyUsers() {
+   public Company getCurrentUserCompany() {
       Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
-      return new ArrayList<>();
+      return user.map(User::getCompany).orElse(null);
    }
 
    public User saveUserWithRole(User user, String roleName) {
@@ -44,8 +41,12 @@ public class UserService {
       if (existingUser.isPresent()) {
          throw new IllegalArgumentException("User with specified username already exists. Choose another username");
       }
+
       Optional<User> oCurrentUser = this.getUserWithAuthorities();
       user.setRoles(this.getRolesByCurrentUser(oCurrentUser, roleName));
+
+      this.checkUserCompany(user);
+
       user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
       // For now set activated by default until we enable email activation
       user.setActivated(true);
@@ -58,21 +59,15 @@ public class UserService {
          roleName = AvailableRoles.User.name();
       } else {
          User currentUser = oCurrentUser.get();
-         Set<Role> currentUserRoles = currentUser.getRoles();
-         Optional<Role> userRoleCompanyAdmin = currentUserRoles.stream()
-            .filter(r -> AvailableRoles.CompanyAdmin.name().equals(r.getName()))
-            .findFirst();
+         boolean userRoleCompanyAdmin = SecurityUtils.userHasRole(currentUser, AvailableRoles.CompanyAdmin);
 
          // If user is company admin he can add only agents
-         if (userRoleCompanyAdmin.isPresent()) {
-            Optional<Role> userRoleSuperAdmin = currentUserRoles.stream()
-               .filter(r -> AvailableRoles.SuperAdmin.name().equals(r.getName()))
-               .findFirst();
+         if (userRoleCompanyAdmin) {
+            boolean hasSuperAdminRole = SecurityUtils.userHasRole(currentUser, AvailableRoles.SuperAdmin);
             // Assign agent role if current user is not super admin as super admin can add any role but company admin only agent
-            if (userRoleSuperAdmin.isEmpty()) {
+            if (!hasSuperAdminRole) {
                roleName = AvailableRoles.Agent.name();
             }
-
          }
       }
 
@@ -88,4 +83,11 @@ public class UserService {
       return roles;
    }
 
+   private void checkUserCompany(User user) {
+      boolean isCompanyAdmin = SecurityUtils.userHasRole(user, AvailableRoles.CompanyAdmin);
+      boolean isAgent = SecurityUtils.userHasRole(user, AvailableRoles.Agent);
+      if ((isCompanyAdmin || isAgent) && user.getCompany() == null) {
+         throw new IllegalArgumentException("User is missing company");
+      }
+   }
 }

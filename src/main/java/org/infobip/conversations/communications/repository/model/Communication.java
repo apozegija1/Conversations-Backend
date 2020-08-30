@@ -1,5 +1,8 @@
 package org.infobip.conversations.communications.repository.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
 import org.infobip.conversations.communicationtypes.repository.model.CommunicationType;
 import org.infobip.conversations.users.repository.model.User;
 
@@ -15,26 +18,32 @@ public class Communication {
 
    @Id
    @Column(name = "id")
+   @JsonProperty("id")
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-   @ManyToOne(cascade = CascadeType.ALL)
+   @ManyToOne
+   @JsonProperty("agent")
    @JoinColumn(name = "agent_id")
    private User agent;
 
-   @ManyToOne(cascade = CascadeType.ALL)
+   @ManyToOne
+   @JsonProperty("customer")
    @JoinColumn(name = "customer_id")
    private User customer;
 
-   @ManyToOne(cascade = CascadeType.ALL)
+   @ManyToOne
+   @JsonProperty("type")
    @JoinColumn(name = "type_id")
    private CommunicationType type;
 
    @Column(name = "start_time")
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
    @NotNull
    private Timestamp start_time;
 
    @Column(name = "end_time")
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
    @NotNull
    private Timestamp end_time;
 
@@ -42,6 +51,8 @@ public class Communication {
    @NotNull
    @Size(min = 4, max = 400)
    private String text;
+
+   public Communication() {}
 
    public Long getId() {
       return id;

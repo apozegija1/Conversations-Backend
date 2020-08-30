@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.Nullable;
 import org.hibernate.annotations.BatchSize;
+import org.infobip.conversations.common.validators.ValidPassword;
 import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.companies.repository.model.Company;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
@@ -31,37 +33,39 @@ public class User {
    @Size(min = 4, max = 50)
    private String username;
 
+   @ValidPassword
    @Column(name = "password", length = 100)
    @NotNull
-   @Size(min = 4, max = 100)
+   @Size(min = 8, max = 100)
    private String password;
 
-   @Column(name = "first_name", length = 50)
+   @Column(name = "first_name", length = 20)
    @NotNull
-   @Size(min = 4, max = 50)
+   @Size(min = 3, max = 20)
    private String firstname;
 
-   @Column(name = "last_name", length = 50)
+   @Column(name = "last_name", length = 20)
    @NotNull
-   @Size(min = 4, max = 50)
+   @Size(min = 3, max = 20)
    private String lastname;
 
+   @Email
    @Column(name = "email", length = 50)
    @NotNull
-   @Size(min = 4, max = 50)
+   @Size(min = 3, max = 50)
    private String email;
 
    @Column(name = "phone", length = 50)
-   @Size(min = 4, max = 50)
+   @Size(min = 3, max = 50)
    @Nullable
    private String phone;
 
    @Column(name = "gender", length = 50)
    @Nullable
-   @Size(min = 4, max = 50)
+   @Size(min = 3, max = 50)
    private String gender;
 
-   @OneToOne(cascade = CascadeType.ALL)
+   @OneToOne
    @JoinColumn(name = "company_id", referencedColumnName = "id")
    private Company company;
 
@@ -77,10 +81,6 @@ public class User {
       inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
    @BatchSize(size = 20)
    private Set<Role> roles = new HashSet<>();
-
-   @OneToMany(cascade = CascadeType.ALL)
-   @JoinColumn(name = "id")
-   private Set<Communication> communicationList = new HashSet<>();
 
    public Long getId() {
       return id;
@@ -197,11 +197,5 @@ public class User {
       this.company = company;
    }
 
-   public Set<Communication> getCommunicationList() {
-      return communicationList;
-   }
 
-   public void setCommunicationList(Set<Communication> communicationList) {
-      this.communicationList = communicationList;
-   }
 }

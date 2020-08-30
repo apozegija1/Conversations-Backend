@@ -2,6 +2,7 @@ package org.infobip.conversations.communicationtypes.repository.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Cacheable(false)
@@ -15,6 +16,7 @@ public class CommunicationType {
 
    @Column(name = "type", length = 50)
    @NotNull
+   @Size(min = 2, max = 50)
    private String type;
 
    @Override

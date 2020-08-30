@@ -2,20 +2,18 @@ package org.infobip.conversations.users.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
-import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
-import org.infobip.conversations.companies.repository.model.Company;
+import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
-import org.infobip.conversations.users.repository.model.Role;
+import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.infobip.conversations.users.utils.SecurityUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.infobip.conversations.users.repository.model.User;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
@@ -25,21 +23,18 @@ public class UserRestController {
 
    private final UserService userService;
 
-   @Autowired
-   private UserRepository userRepository;
+   private final UserRepository userRepository;
 
-   public UserRestController(UserService userService) {
+   public UserRestController(UserRepository userRepository,
+                             UserService userService) {
       this.userService = userService;
+      this.userRepository = userRepository;
    }
 
    @GetMapping("/user")
-   public ResponseEntity<User> getActualUser() {
-      return ResponseEntity.ok(userService.getUserWithAuthorities().get());
-   }
-
-   @GetMapping("/user/companies")
-   public ResponseEntity<List<User>> getCompanyUsers() {
-      return ResponseEntity.ok(userService.getCompanyUsers());
+   public ResponseEntity<Response> getActualUser() {
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+         .setResult(userService.getUserWithAuthorities().get()), HttpStatus.OK);
    }
 
    @PostMapping
@@ -55,25 +50,41 @@ public class UserRestController {
          .setResult(savedUser), HttpStatus.OK);
    }
 
-   @PutMapping
+   @PutMapping("/users")
    public ResponseEntity<Response> update(@RequestBody User user) {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(userRepository.save(user)), HttpStatus.OK);
    }
 
-   @GetMapping("/{id}")
+   @GetMapping("/users/{id}")
    public ResponseEntity<Response> read(@PathVariable Long id) {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(userRepository.findById(id)), HttpStatus.OK);
    }
 
-   @GetMapping
+   @GetMapping("/users")
    public ResponseEntity<Response> readAll(Pageable pageable) {
+      boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
+      boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
+      Page<User> users = null;
+      if (isSuperAdmin) {
+         users = userRepository.findAll(pageable);
+      } else if (isCompanyAdmin) {
+         User user = this.userService.getUserWithAuthorities().get();
+         // Check company of the user and pass it to get users for company
+         if (user.getCompany() != null) {
+            users = userRepository.findAllUsersForCompany(user.getCompany().getId(), pageable);
+         } else {
+            return ResponseEntity
+               .status(HttpStatus.BAD_REQUEST)
+               .body(new Response(ResultCode.ERROR, "Invalid user company"));
+         }
+      }
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-         .setResult(userRepository.findAll(pageable)), HttpStatus.OK);
+         .setResult(users), HttpStatus.OK);
    }
 
-   @DeleteMapping("/{id}")
+   @DeleteMapping("/users/{id}")
    public void delete(@PathVariable Long id) {
       userRepository.deleteById(id);
    }

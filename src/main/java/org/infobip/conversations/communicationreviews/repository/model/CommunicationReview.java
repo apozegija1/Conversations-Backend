@@ -1,11 +1,14 @@
 package org.infobip.conversations.communicationreviews.repository.model;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.infobip.conversations.communications.repository.model.Communication;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Cacheable(false)
@@ -18,13 +21,13 @@ public class CommunicationReview {
    private Long id;
 
    @Column(name = "date")
-   @Temporal(TemporalType.DATE)
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
    @NotNull
-   private Date date;
+   private Timestamp date;
 
-   @OneToOne(cascade = CascadeType.ALL)
-   @JoinColumn(name = "communication_id")
-   @NotNull
+   @JsonProperty("communication")
+   @OneToOne
+   @JoinColumn(name = "communication_id", referencedColumnName = "id", columnDefinition="integer")
    private Communication communication;
 
    @Column(name = "rating")
@@ -43,11 +46,11 @@ public class CommunicationReview {
       this.id = id;
    }
 
-   public Date getDate() {
+   public Timestamp getDate() {
       return date;
    }
 
-   public void setDate(Date date) {
+   public void setDate(Timestamp date) {
       this.date = date;
    }
 

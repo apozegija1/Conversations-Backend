@@ -99,6 +99,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
          //{accountId:\\d+}
          .antMatchers("/api/users").hasAnyAuthority(String.valueOf(AvailableRoles.SuperAdmin), String.valueOf(AvailableRoles.CompanyAdmin))
          .antMatchers("/api/user").authenticated()
+         .antMatchers("/api/communications/users")
+            .hasAnyAuthority(String.valueOf(AvailableRoles.Agent), String.valueOf(AvailableRoles.CompanyAdmin), String.valueOf(AvailableRoles.User))
          // .antMatchers("/api/activate").permitAll()
          // .antMatchers("/api/account/reset-password/init").permitAll()
          // .antMatchers("/api/account/reset-password/finish").permitAll()
