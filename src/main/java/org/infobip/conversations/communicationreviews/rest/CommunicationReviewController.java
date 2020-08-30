@@ -60,12 +60,6 @@ public class CommunicationReviewController {
            .setResult(communicationReviewRepository.findById(id)), HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<Response> readAll(Pageable pageable) {
-        return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-           .setResult(communicationReviewRepository.findAll(pageable)), HttpStatus.OK);
-    }
-
    @DeleteMapping("/{id}")
    public void delete(@PathVariable Long id) {
       communicationReviewRepository.deleteById(id);
@@ -79,7 +73,6 @@ public class CommunicationReviewController {
 
 
    //all communicationreviews for company by role
-
    @GetMapping()
    public ResponseEntity<Response> readAll() {
       boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);

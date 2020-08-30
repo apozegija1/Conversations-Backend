@@ -49,7 +49,7 @@ public class CompanyController {
     }
 
    @GetMapping("/all")
-   public ResponseEntity<Response> readAll() {
+   public ResponseEntity<Response> readAllCompanies() {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(companyRepository.findAll()), HttpStatus.OK);
    }
