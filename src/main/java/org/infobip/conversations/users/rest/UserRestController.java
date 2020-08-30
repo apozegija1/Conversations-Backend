@@ -2,21 +2,15 @@ package org.infobip.conversations.users.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
-import org.infobip.conversations.common.utils.LongUtils;
-import org.infobip.conversations.common.utils.PageUtils;
-import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
 import org.infobip.conversations.users.utils.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -29,21 +23,18 @@ public class UserRestController {
 
    private final UserService userService;
 
-   @Autowired
-   private UserRepository userRepository;
+   private final UserRepository userRepository;
 
-   public UserRestController(UserService userService) {
+   public UserRestController(UserRepository userRepository,
+                             UserService userService) {
       this.userService = userService;
+      this.userRepository = userRepository;
    }
 
    @GetMapping("/user")
-   public ResponseEntity<User> getActualUser() {
-      return ResponseEntity.ok(userService.getUserWithAuthorities().get());
-   }
-
-   @GetMapping("/user/companies")
-   public ResponseEntity<List<User>> getCompanyUsers() {
-      return ResponseEntity.ok(userService.getCompanyUsers());
+   public ResponseEntity<Response> getActualUser() {
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+         .setResult(userService.getUserWithAuthorities().get()), HttpStatus.OK);
    }
 
    @PostMapping
