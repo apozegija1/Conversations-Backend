@@ -6,6 +6,12 @@ import org.infobip.conversations.common.utils.LongUtils;
 import org.infobip.conversations.communicationreviews.repository.CommunicationReviewRepository;
 import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
 import org.infobip.conversations.communicationreviews.service.CommunicationReviewService;
+import org.infobip.conversations.communications.models.UserCommunication;
+import org.infobip.conversations.communications.repository.model.Communication;
+import org.infobip.conversations.users.AvailableRoles;
+import org.infobip.conversations.users.repository.model.User;
+import org.infobip.conversations.users.service.UserService;
+import org.infobip.conversations.users.utils.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +31,7 @@ import static org.infobip.conversations.common.Constant.SUCCESS;
 public class CommunicationReviewController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private UserService userService;
 
     @Autowired
     private CommunicationReviewService communicationReviewService;
@@ -64,21 +71,35 @@ public class CommunicationReviewController {
       communicationReviewRepository.deleteById(id);
    }
 
-
    @GetMapping("/users")
-   public ResponseEntity<Response> getAllReviewsForUser(@RequestParam Map<String, String> queryParameters) {
-      Long agentId = LongUtils.stringToLong(queryParameters.getOrDefault("agentId", null));
-      Long customerId = LongUtils.stringToLong(queryParameters.getOrDefault("customerId", null));
-      List<CommunicationReview> list = communicationReviewRepository.findAllReviewsForUser(agentId, customerId);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
+   public ResponseEntity<Response> getAllCommunicationReviewsForUser() throws Exception {
+      List<CommunicationReview> userCommunicationReviews = communicationReviewService.findAllCommunicationReviewsForUser();
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(userCommunicationReviews), HttpStatus.OK);
    }
 
-   @GetMapping("/usersByUsername")
-   public ResponseEntity<Response> getAllReviewsForUserByUsername(@RequestParam Map<String, String> queryParameters) {
-      String agentUsername = queryParameters.getOrDefault("agentUsername", null);
-      String customerUsername = queryParameters.getOrDefault("customerUsername", null);
-      List<CommunicationReview> list = communicationReviewRepository.findAllReviewsForUserByUsername(agentUsername, customerUsername);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(list), HttpStatus.OK);
+
+   //all communicationreviews for company by role
+
+   @GetMapping()
+   public ResponseEntity<Response> readAll() {
+      boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
+      boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
+      List<CommunicationReview> communicationReviews = null;
+      if (isSuperAdmin) {
+         communicationReviews = communicationReviewRepository.findAll();
+      } else if (isCompanyAdmin) {
+         User user = this.userService.getUserWithAuthorities().get();
+         // Check company of the user and pass it to get reviews for company
+         if (user.getCompany() != null) {
+            communicationReviews = communicationReviewRepository.findAllCommunicationReviewsForCompany(user.getCompany().getId());
+         } else {
+            return ResponseEntity
+               .status(HttpStatus.BAD_REQUEST)
+               .body(new Response(ResultCode.ERROR, "Invalid user company"));
+         }
+      }
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+         .setResult(communicationReviews), HttpStatus.OK);
    }
 
 

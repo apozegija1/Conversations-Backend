@@ -16,15 +16,14 @@ public interface CommunicationReviewRepository extends JpaRepository<Communicati
       "AND (c.agent.id = ?1 OR c.customer.id = ?2)")
       //if agent is null, we will get all communications for a specific user,
       //and if customer is null, we will get all communications for agent
-   List<CommunicationReview> findAllReviewsForUser(Long agentId, Long customerId);
+   List<CommunicationReview> findAllCommunicationReviewsForUser(Long agentId, Long customerId);
 
 
    @Query("SELECT cr " +
-      "FROM  CommunicationReview cr, Communication c, User ua, User uc " +
-      "WHERE cr.communication.id = c.id AND uc.id = c.customer.id AND ua.id = c.agent.id " +
-      "AND (c.agent.username = ?1 OR c.customer.username = ?2)")
-
-   List<CommunicationReview> findAllReviewsForUserByUsername(String agentUsername, String customerUsername);
+      "FROM  CommunicationReview cr, Communication cm, User ua, User uc, Company cp " +
+      "WHERE cr.communication.id = cm.id AND uc.id = cm.customer.id AND ua.id = cm.agent.id AND ua.company.id = cp.id " +
+      "AND cp.id = ?1")
+   List<CommunicationReview> findAllCommunicationReviewsForCompany(Long companyId);
 
 
    @Query(value = "SELECT AVG(cr.rating) " +
