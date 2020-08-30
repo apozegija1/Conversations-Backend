@@ -54,8 +54,8 @@ public class CommunicationService {
          userCommunicationsMapping = communications.stream()
             .collect(groupingBy(Communication::getAgent));
       } else if (isCustomerUser) {
-         List<Communication> list = communicationRepository.findAllCommunicationsForUser(null, currentUser.getId());
-         userCommunicationsMapping = list.stream()
+         List<Communication> communications = communicationRepository.findAllCommunicationsForUser(null, currentUser.getId());
+         userCommunicationsMapping = communications.stream()
             .collect(groupingBy(Communication::getCustomer));
       }
 

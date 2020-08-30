@@ -40,7 +40,7 @@ public class RoleRestController {
          .setResult(roleRepository.save(role)), HttpStatus.OK);
    }
 
-   @GetMapping("{id}")
+   @GetMapping("/{id}")
    public ResponseEntity<Response> read(@PathVariable Long id) {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(roleRepository.findById(id)), HttpStatus.OK);

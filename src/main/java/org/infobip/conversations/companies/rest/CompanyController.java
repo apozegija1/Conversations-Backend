@@ -48,10 +48,14 @@ public class CompanyController {
            .setResult(companyRepository.findAll(pageable)), HttpStatus.OK);
     }
 
+   @GetMapping("/all")
+   public ResponseEntity<Response> readAll() {
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+         .setResult(companyRepository.findAll()), HttpStatus.OK);
+   }
+
    @PutMapping
    public ResponseEntity<Response> update(@RequestBody Company company) {
-      Optional<Company> dbAdmin = companyRepository.findById(company.getId());
-
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(companyRepository.save(company)), HttpStatus.OK);
    }
