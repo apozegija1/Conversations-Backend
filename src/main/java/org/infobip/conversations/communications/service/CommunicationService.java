@@ -52,11 +52,11 @@ public class CommunicationService {
          }
 
          userCommunicationsMapping = communications.stream()
-            .collect(groupingBy(Communication::getAgent));
+            .collect(groupingBy(Communication::getCustomer));
       } else if (isCustomerUser) {
          List<Communication> communications = communicationRepository.findAllCommunicationsForUser(null, currentUser.getId());
          userCommunicationsMapping = communications.stream()
-            .collect(groupingBy(Communication::getCustomer));
+            .collect(groupingBy(Communication::getAgent));
       }
 
       return userCommunicationsMapping

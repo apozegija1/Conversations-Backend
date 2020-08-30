@@ -62,12 +62,6 @@ public class CommunicationController {
            .setResult(communicationRepository.findById(id)), HttpStatus.OK);
     }
 
-    /*@GetMapping
-    public ResponseEntity<Response> readAll(Pageable pageable) {
-        return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-           .setResult(communicationRepository.findAll(pageable)), HttpStatus.OK);
-    }*/
-
    @DeleteMapping("/{id}")
    public void delete(@PathVariable Long id) {
       communicationRepository.deleteById(id);
@@ -79,10 +73,8 @@ public class CommunicationController {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(userCommunications), HttpStatus.OK);
    }
 
-
-   //all communications for company by role
-
-   @GetMapping()
+   //all communications for company by role, as this is not pageable we use /all route
+   @GetMapping("/all")
    public ResponseEntity<Response> readAll() {
       boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
       boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
@@ -103,7 +95,7 @@ public class CommunicationController {
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(communications), HttpStatus.OK);
    }
-   
+
    /*
     * STATISTICS ROUTES
     * */
