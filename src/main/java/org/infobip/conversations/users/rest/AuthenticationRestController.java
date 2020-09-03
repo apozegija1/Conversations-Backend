@@ -63,7 +63,7 @@ public class AuthenticationRestController {
 
    @PostMapping("/register")
    public ResponseEntity<Response> register(@RequestBody User user) {
-      User savedUser = userService.saveUserWithRole(user, AvailableRoles.User.name());
+      User savedUser = userService.saveUserWithRole(user);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(savedUser), HttpStatus.OK);
    }

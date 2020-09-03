@@ -21,6 +21,7 @@ import java.util.Set;
 
 @Entity
 @Cacheable(false)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "users")
 public class User {
 
@@ -57,8 +58,8 @@ public class User {
    private String email;
 
    @Column(name = "phone", length = 50)
-   @Size(min = 3, max = 50)
    @Nullable
+   @Size(min = 3, max = 50)
    private String phone;
 
    @Column(name = "gender", length = 50)

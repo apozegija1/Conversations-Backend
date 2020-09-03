@@ -1,6 +1,7 @@
 package org.infobip.conversations.users.utils;
 
 import org.infobip.conversations.users.AvailableRoles;
+import org.infobip.conversations.users.repository.model.Role;
 import org.infobip.conversations.users.repository.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 public class SecurityUtils {
 
@@ -69,6 +71,11 @@ public class SecurityUtils {
 
    public static boolean userHasRole(User user, AvailableRoles role) {
       return user.getRoles().stream()
+         .anyMatch(r -> role.name().equals(r.getName()));
+   }
+
+   public static boolean hasRole(Set<Role> roles, AvailableRoles role) {
+      return roles.stream()
          .anyMatch(r -> role.name().equals(r.getName()));
    }
 

@@ -2,6 +2,7 @@ package org.infobip.conversations.users.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
+import org.infobip.conversations.common.utils.JPABeanUtils;
 import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
@@ -37,23 +38,21 @@ public class UserRestController {
          .setResult(userService.getUserWithAuthorities().get()), HttpStatus.OK);
    }
 
-   @PostMapping
-   public ResponseEntity<Response> create(@RequestBody User user) {
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-         .setResult(userRepository.save(user)), HttpStatus.OK);
-   }
-
-   @PostMapping("/users/role/{roleName}")
-   public ResponseEntity<Response> createUserWithRole(@RequestBody User user, @PathVariable String roleName) {
-      User savedUser = userService.saveUserWithRole(user, roleName);
+   @PostMapping("/users")
+   public ResponseEntity<Response> createUserWithRole(@RequestBody User user) {
+      User savedUser = userService.saveUserWithRole(user);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(savedUser), HttpStatus.OK);
    }
 
    @PutMapping("/users")
    public ResponseEntity<Response> update(@RequestBody User user) {
+      User existing = userRepository.getOne(user.getId());
+      // JPABeanUtils.copyNonNullProperties(user, existing);
+      // Pass existing user to which we copied all non null values from frontend and update its role, etc
+      User saved = userService.saveOrUpdateUser(user, existing);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-         .setResult(userRepository.save(user)), HttpStatus.OK);
+         .setResult(saved), HttpStatus.OK);
    }
 
    @GetMapping("/users/{id}")
