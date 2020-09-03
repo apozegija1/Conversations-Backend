@@ -1,6 +1,6 @@
 package org.infobip.conversations.statistics.repository;
 
-import org.infobip.conversations.statistics.models.StatisticsOverview;
+import org.infobip.conversations.statistics.models.IStatisticsOverview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
-public interface StatisticsRepository extends JpaRepository<StatisticsOverview, Long> {
+public interface StatisticsRepository extends JpaRepository<IStatisticsOverview, Long> {
 
 
    @Query(value = "SELECT AVG(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time))) " +
@@ -37,7 +37,7 @@ public interface StatisticsRepository extends JpaRepository<StatisticsOverview, 
       "FROM communications cm, users ua, users uc, companies cp, communicationtypes ct " +
       "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND cm.type_id = ct.id " +
       "AND (cp.id = ?1 OR ua.id =?2) AND (cm.type_id = 2 OR cm.type_id = 3)", nativeQuery = true)
-   List<StatisticsOverview> findAllStatisticOverviewsForCompanyOrAgent(Long companyId, Long userId);
+   List<IStatisticsOverview> findAllStatisticOverviewsForCompanyOrAgent(Long companyId, Long userId);
 
    @Query(value = "SELECT count(cm.id) AS Calls, MONTH(cm.start_time) AS Month " +
       "FROM communications cm, users ua, users uc, companies cp, communicationtypes ct " +

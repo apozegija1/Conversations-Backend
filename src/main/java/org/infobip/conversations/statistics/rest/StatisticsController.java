@@ -3,7 +3,7 @@ package org.infobip.conversations.statistics.rest;
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.common.utils.LongUtils;
-import org.infobip.conversations.statistics.models.StatisticsOverview;
+import org.infobip.conversations.statistics.models.IStatisticsOverview;
 import org.infobip.conversations.statistics.repository.StatisticsRepository;
 import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.model.User;
@@ -78,7 +78,7 @@ public class StatisticsController {
       boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
       boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
 
-      List<StatisticsOverview> statisticsOverviews = null;
+      List<IStatisticsOverview> statisticsOverviews = null;
       if (isSuperAdmin) {
          //data for superAdmin: number od users, number of companies and average number of registered users in this year
          List<Long> statisticsOverviewsForSuperAgent = statisticsRepository.findAllStatisticOverviewsForSuperAgent();
