@@ -7,18 +7,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.Nullable;
 import org.hibernate.annotations.BatchSize;
 import org.infobip.conversations.common.validators.ValidPassword;
-import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.companies.repository.model.Company;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 

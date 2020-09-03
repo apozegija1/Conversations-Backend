@@ -46,14 +46,14 @@ public interface StatisticsRepository extends JpaRepository<StatisticsOverview, 
       "AND YEAR(cm.start_time) = YEAR(NOW()) " +
       "GROUP BY MONTH(cm.start_time) " +
       "ORDER BY MONTH(cm.start_time) ASC", nativeQuery = true)
-   List<Long> findAllCallsByMonthsForCurrentYearForCompanyOrAgent(Long companyId, Long userId);
+   List<Long> findAllCallsByMonthsForCurrentYear(Long companyId, Long userId);
 
    @Query(value = "SELECT count(u.id) AS Users, MONTH(u.created_at) AS 'Month' " +
       "FROM users u " +
       "WHERE YEAR(u.created_at) = YEAR(NOW()) " +
       "GROUP BY MONTH(u.created_at) " +
       "ORDER BY MONTH(u.created_at) ASC", nativeQuery = true)
-   List<Long> findAllUsersByMonthsForCurrentYearForSuperAgent();
+   List<Long> findAllUsersByMonthsForCurrentYear();
 
    @Query(value = "SELECT count(u.id) AS Users, count(cp.id) AS Companies, AVG(COUNT(u.id)) AS AvgUsersRegistered " +
       "FROM users u, companies cp " +
