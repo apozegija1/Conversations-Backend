@@ -1,5 +1,6 @@
 package org.infobip.conversations.users.repository.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,12 +9,14 @@ import org.hibernate.annotations.BatchSize;
 import org.infobip.conversations.common.validators.ValidPassword;
 import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.companies.repository.model.Company;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -85,6 +88,11 @@ public class User {
       inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
    @BatchSize(size = 20)
    private Set<Role> roles = new HashSet<>();
+
+   @CreatedDate
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
+   @Column(name = "created_at", nullable = false, updatable = false)
+   private Timestamp createdAt;
 
    public Long getId() {
       return id;

@@ -91,35 +91,45 @@ public class StatisticsController {
 
       List<StatisticsOverview> statisticsOverviews = null;
       if (isSuperAdmin) {
-         statisticsOverviews = statisticsRepository.findAllStatisticOverviewsForCompanyOrAgent(null, null);
-      } else if (isCompanyAdmin) {
-         User user = this.userService.getUserWithAuthorities().get();
-         // Check company of the user and pass it to get statistics for company
-         if (user.getCompany() != null) {
-            statisticsOverviews = statisticsRepository.findAllStatisticOverviewsForCompanyOrAgent(user.getCompany().getId(), null);
-         } else {
-            return ResponseEntity
-               .status(HttpStatus.BAD_REQUEST)
-               .body(new Response(ResultCode.ERROR, "Invalid user company"));
+         //data for superAdmin: number od users, number of companies and average number of registered users in this year
+         List<Long> statisticsOverviewsForSuperAgent = statisticsRepository.findAllStatisticOverviewsForSuperAgent();
+
+         return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+            .setResult(statisticsOverviewsForSuperAgent), HttpStatus.OK);
+
+      } else {
+         if (isCompanyAdmin) {
+            User user = this.userService.getUserWithAuthorities().get();
+            // Check company of the user and pass it to get statistics for company
+            if (user.getCompany() != null) {
+               statisticsOverviews = statisticsRepository.findAllStatisticOverviewsForCompanyOrAgent(user.getCompany().getId(), null);
+            } else {
+               return ResponseEntity
+                  .status(HttpStatus.BAD_REQUEST)
+                  .body(new Response(ResultCode.ERROR, "Invalid user company"));
+            }
+         } else if (isAgent) {
+            User user = this.userService.getUserWithAuthorities().get();
+            statisticsOverviews = statisticsRepository.findAllStatisticOverviewsForCompanyOrAgent(null, user.getId());
          }
-      } else if(isAgent) {
-         User user = this.userService.getUserWithAuthorities().get();
-         statisticsOverviews = statisticsRepository.findAllStatisticOverviewsForCompanyOrAgent(null, user.getId());
+
+         return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
+            .setResult(statisticsOverviews), HttpStatus.OK);
       }
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-         .setResult(statisticsOverviews), HttpStatus.OK);
    }
 
-   @GetMapping("/callsByMonths")
-   public ResponseEntity<Response> getCallsByMonthsForCurrentYear() {
+   @GetMapping("/chartHomepage")
+   public ResponseEntity<Response> getNumberOfElementsForChartOnHomepage() {
       boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
       boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
       boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
 
       List<Long> numberOfCalls = null;
       if (isSuperAdmin) {
-         numberOfCalls = statisticsRepository.findAllCallsByMonthsForCurrentYearForCompanyOrAgent(null, null);
+         //superAdmin can only see how many users registered by month
+         numberOfCalls = statisticsRepository.findAllUsersByMonthsForCurrentYearForSuperAgent();
       } else if (isCompanyAdmin) {
+         //company can see how many calls in company are there by month, and agent can see only his calls by months
          User user = this.userService.getUserWithAuthorities().get();
          // Check company of the user and pass it to get statistics for company
          if (user.getCompany() != null) {
@@ -133,8 +143,10 @@ public class StatisticsController {
          User user = this.userService.getUserWithAuthorities().get();
          numberOfCalls = statisticsRepository.findAllCallsByMonthsForCurrentYearForCompanyOrAgent(null, user.getId());
       }
+
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(numberOfCalls), HttpStatus.OK);
+
    }
 
 
