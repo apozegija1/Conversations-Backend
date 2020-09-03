@@ -14,3 +14,4 @@ INSERT INTO userroles (user_id, role_id) VALUES (2, 2);
 
 INSERT INTO communicationtypes (id, type) VALUES (1, 'SMS');
 INSERT INTO communicationtypes (id, type) VALUES (2, 'Video');
+INSERT INTO communicationtypes (id, type) VALUES (3, 'Call');
