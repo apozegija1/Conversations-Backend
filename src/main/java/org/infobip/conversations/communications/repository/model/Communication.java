@@ -2,6 +2,7 @@ package org.infobip.conversations.communications.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.infobip.conversations.common.Constant;
 import org.infobip.conversations.communicationreviews.repository.model.CommunicationReview;
 import org.infobip.conversations.communicationtypes.repository.model.CommunicationType;
 import org.infobip.conversations.users.repository.model.User;
@@ -38,14 +39,14 @@ public class Communication {
    private CommunicationType type;
 
    @Column(name = "start_time")
-   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern=Constant.TIMESTAMP_FORMAT, timezone="Europe/Berlin")
    @NotNull
-   private Timestamp start_time;
+   private Timestamp startTime;
 
    @Column(name = "end_time")
-   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern=Constant.TIMESTAMP_FORMAT, timezone="Europe/Berlin")
    @NotNull
-   private Timestamp end_time;
+   private Timestamp endTime;
 
    @Column(name = "text", length = 400)
    @NotNull
@@ -86,20 +87,20 @@ public class Communication {
       this.type = type;
    }
 
-   public Timestamp getStart_time() {
-      return start_time;
+   public Timestamp getStartTime() {
+      return startTime;
    }
 
-   public void setStart_time(Timestamp start_time) {
-      this.start_time = start_time;
+   public void setStartTime(Timestamp start_time) {
+      this.startTime = start_time;
    }
 
-   public Timestamp getEnd_time() {
-      return end_time;
+   public Timestamp getEndTime() {
+      return endTime;
    }
 
-   public void setEnd_time(Timestamp end_time) {
-      this.end_time = end_time;
+   public void setEndTime(Timestamp end_time) {
+      this.endTime = end_time;
    }
 
    public String getText() {

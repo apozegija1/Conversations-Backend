@@ -46,7 +46,7 @@ public class CommunicationController {
     @PostMapping
     public ResponseEntity<Response> create(@RequestBody Communication communication) {
         return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
-           .setResult(communicationRepository.save(communication)), HttpStatus.OK);
+           .setResult(communicationService.save(communication)), HttpStatus.OK);
     }
 
     @PutMapping

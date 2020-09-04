@@ -3,6 +3,7 @@ package org.infobip.conversations.communicationreviews.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.infobip.conversations.common.Constant;
 import org.infobip.conversations.communications.repository.model.Communication;
 
 import javax.persistence.*;
@@ -21,7 +22,7 @@ public class CommunicationReview {
    private Long id;
 
    @Column(name = "date")
-   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= Constant.TIMESTAMP_FORMAT, timezone="Europe/Berlin")
    @NotNull
    private Timestamp date;
 
