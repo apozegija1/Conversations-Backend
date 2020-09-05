@@ -40,6 +40,7 @@ public class CommunicationService {
       if (type.isEmpty()) {
          throw new IllegalArgumentException("Invalid communication type");
       }
+
       communication.setType(type.get());
       communication.setEndTime(new Timestamp(System.currentTimeMillis()));
       return communicationRepository.save(communication);
