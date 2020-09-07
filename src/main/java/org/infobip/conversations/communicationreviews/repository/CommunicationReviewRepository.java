@@ -26,12 +26,12 @@ public interface CommunicationReviewRepository extends JpaRepository<Communicati
    List<CommunicationReview> findAllCommunicationReviewsForCompany(Long companyId);
 
 
+
    @Query(value = "SELECT AVG(cr.rating) " +
       "FROM communicationreviews cr, communications cm, users ua, users uc, companies cp, communicationtypes ct " +
-      "WHERE cr.communication_id = cm.id AND cm.agent_id = ua.id AND cm.customer_id = ua.id " +
+      "WHERE cr.communication_id = cm.id AND cm.agent_id = ua.id AND cm.customer_id = uc.id " +
       "AND ua.company_id = cp.id AND cm.type_id = ct.id " +
       "AND (cp.id = ?1 OR ct.id = ?2) " +
       "GROUP BY ct.type", nativeQuery = true)
-
    Float findAverageRatingForCompanybyCommunicationType(Long companyId, Long typeId);
 }
