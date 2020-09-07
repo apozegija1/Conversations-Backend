@@ -2,7 +2,7 @@ package org.infobip.conversations.statistics.models;
 
 import java.sql.Time;
 
-public class StatisticsOverview implements IStatisticsOverview {
+public class StatisticsOverview {
    public Long numberOfElementsOfEntityOne;
    public Long numberOfElementsOfEntityTwo;
    public Time numberOfElementsOfEntityThree;

@@ -3,9 +3,11 @@ package org.infobip.conversations.statistics.rest;
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.common.utils.LongUtils;
-import org.infobip.conversations.statistics.models.IStatisticsOverview;
-import org.infobip.conversations.statistics.repository.StatisticsRepository;
+import org.infobip.conversations.communicationreviews.repository.CommunicationReviewRepository;
+import org.infobip.conversations.communications.repository.CommunicationRepository;
+import org.infobip.conversations.statistics.models.StatisticsOverview;
 import org.infobip.conversations.users.AvailableRoles;
+import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
 import org.infobip.conversations.users.utils.SecurityUtils;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +34,15 @@ public class StatisticsController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private StatisticsRepository statisticsRepository;
+   @Autowired
+    private CommunicationRepository communicationRepository;
+   @Autowired
+   private CommunicationReviewRepository communicationReviewRepository;
 
+   @Autowired
+   private UserRepository userRepository;
+
+   @Autowired
    private UserService userService;
 
    //date se prosljeđuje u formatu: yyyy-mm-dd hh:mm:ss.sss, npr: 2012-05-16 00:00:00.000
@@ -45,7 +54,7 @@ public class StatisticsController {
       Timestamp fromDate = Timestamp.valueOf((queryParameters.getOrDefault("fromDate", null)));
       Timestamp toDate = Timestamp.valueOf((queryParameters.getOrDefault("toDate", null)));
 
-      Float average = statisticsRepository.findAverageDurationInSeconds(companyId, agentId, fromDate, toDate);
+      Float average = communicationRepository.findAverageDurationInSeconds(companyId, agentId, fromDate, toDate);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 
@@ -58,7 +67,7 @@ public class StatisticsController {
       Timestamp fromDate = Timestamp.valueOf((queryParameters.getOrDefault("fromDate", null)));
       Timestamp toDate = Timestamp.valueOf((queryParameters.getOrDefault("toDate", null)));
 
-      Long average = statisticsRepository.findCommunicationCountForPeriod(companyId, agentId, fromDate, toDate);
+      Long average = communicationRepository.findCommunicationCountForPeriod(companyId, agentId, fromDate, toDate);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 
@@ -66,7 +75,7 @@ public class StatisticsController {
    public ResponseEntity<Response> getAverageRatingForCompanyByCommunicationType(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
       Long typeId = LongUtils.stringToLong(queryParameters.getOrDefault("typeId", null));
-      Float average = statisticsRepository.findAverageRatingForCompanybyCommunicationType(companyId, typeId);
+      Float average = communicationReviewRepository.findAverageRatingForCompanybyCommunicationType(companyId, typeId);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 
@@ -78,20 +87,20 @@ public class StatisticsController {
       boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
       boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
 
-      List<IStatisticsOverview> statisticsOverviews = null;
+      List<StatisticsOverview> statisticsOverviews = new ArrayList<>();
       if (isSuperAdmin) {
          //data for superAdmin: number od users, number of companies and average number of registered users in this year
-         List<Long> statisticsOverviewsForSuperAgent = statisticsRepository.findAllStatisticOverviewsForSuperAgent();
-
+            List<Integer> statisticsOverviewsForSuperAgent = null;
+         statisticsOverviewsForSuperAgent = userRepository.findAllStatisticOverviewsForSuperAgent();
+         System.out.println(statisticsOverviewsForSuperAgent + " << ");
          return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
             .setResult(statisticsOverviewsForSuperAgent), HttpStatus.OK);
-
       } else {
          if (isCompanyAdmin) {
             User user = this.userService.getUserWithAuthorities().get();
             // Check company of the user and pass it to get statistics for company
             if (user.getCompany() != null) {
-               statisticsOverviews = statisticsRepository.findAllStatisticOverviewsForCompanyOrAgent(user.getCompany().getId(), null);
+               statisticsOverviews = communicationRepository.findAllStatisticOverviewsForCompanyOrAgent(user.getCompany().getId(), null);
             } else {
                return ResponseEntity
                   .status(HttpStatus.BAD_REQUEST)
@@ -99,7 +108,7 @@ public class StatisticsController {
             }
          } else if (isAgent) {
             User user = this.userService.getUserWithAuthorities().get();
-            statisticsOverviews = statisticsRepository.findAllStatisticOverviewsForCompanyOrAgent(null, user.getId());
+            statisticsOverviews = communicationRepository.findAllStatisticOverviewsForCompanyOrAgent(null, user.getId());
          }
 
          return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
@@ -116,13 +125,13 @@ public class StatisticsController {
       List<Long> elementsCount = null;
       if (isSuperAdmin) {
          //superAdmin can only see how many users registered by month
-         elementsCount = statisticsRepository.findAllUsersByMonthsForCurrentYear();
+         elementsCount = userRepository.findAllUsersByMonthsForCurrentYear();
       } else if (isCompanyAdmin) {
          //company can see how many calls in company are there by month, and agent can see only his calls by months
          User user = this.userService.getUserWithAuthorities().get();
          // Check company of the user and pass it to get statistics for company
          if (user.getCompany() != null) {
-            elementsCount = statisticsRepository.findAllCallsByMonthsForCurrentYear(user.getCompany().getId(), null);
+            elementsCount = communicationRepository.findAllCallsByMonthsForCurrentYear(user.getCompany().getId(), null);
          } else {
             return ResponseEntity
                .status(HttpStatus.BAD_REQUEST)
@@ -130,7 +139,7 @@ public class StatisticsController {
          }
       } else if(isAgent) {
          User user = this.userService.getUserWithAuthorities().get();
-         elementsCount = statisticsRepository.findAllCallsByMonthsForCurrentYear(null, user.getId());
+         elementsCount = communicationRepository.findAllCallsByMonthsForCurrentYear(null, user.getId());
       }
 
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
