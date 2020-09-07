@@ -60,7 +60,4 @@ public class CommunicationTypeController {
    public void delete(@PathVariable Long id) {
       communicationTypeRepository.deleteById(id);
    }
-
-
-
 }

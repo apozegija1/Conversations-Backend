@@ -3,6 +3,8 @@ package org.infobip.conversations.communications.service;
 import org.infobip.conversations.communications.models.UserCommunication;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.infobip.conversations.communications.repository.model.Communication;
+import org.infobip.conversations.communicationtypes.repository.CommunicationTypeRepository;
+import org.infobip.conversations.communicationtypes.repository.model.CommunicationType;
 import org.infobip.conversations.companies.repository.model.Company;
 import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.model.User;
@@ -11,6 +13,7 @@ import org.infobip.conversations.users.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.*;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -20,12 +23,26 @@ import static java.util.stream.Collectors.toList;
 public class CommunicationService {
    private final CommunicationRepository communicationRepository;
 
+   private final CommunicationTypeRepository communicationTypeRepository;
+
    private final UserService userService;
 
    public CommunicationService(CommunicationRepository communicationRepository,
+                               CommunicationTypeRepository communicationTypeRepository,
                                UserService userService) {
       this.communicationRepository = communicationRepository;
+      this.communicationTypeRepository = communicationTypeRepository;
       this.userService = userService;
+   }
+
+   public Communication save(Communication communication) {
+      Optional<CommunicationType> type = communicationTypeRepository.findOneByType(communication.getType().getType());
+      if (type.isEmpty()) {
+         throw new IllegalArgumentException("Invalid communication type");
+      }
+      communication.setType(type.get());
+      communication.setEndTime(new Timestamp(System.currentTimeMillis()));
+      return communicationRepository.save(communication);
    }
 
    public List<UserCommunication> findAllCommunicationsForUser() throws Exception {

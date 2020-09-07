@@ -36,51 +36,61 @@ public class UserService {
       return user.map(User::getCompany).orElse(null);
    }
 
-   public User saveUserWithRole(User user, String roleName) {
+   public User saveUserWithRole(User user) {
       Optional<User> existingUser = this.userRepository.findByUsername(user.getUsername());
       if (existingUser.isPresent()) {
          throw new IllegalArgumentException("User with specified username already exists. Choose another username");
       }
 
+      return this.saveOrUpdateUser(user, null);
+   }
+
+   public User saveOrUpdateUser(User user, User existing) {
       Optional<User> oCurrentUser = this.getUserWithAuthorities();
-      user.setRoles(this.getRolesByCurrentUser(oCurrentUser, roleName));
+      user.setRoles(this.getRolesByCurrentUser(oCurrentUser, user.getRoles()));
 
       this.checkUserCompany(user);
 
-      user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
-      // For now set activated by default until we enable email activation
-      user.setActivated(true);
+      if (existing == null) {
+         user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
+         // For now set activated by default until we enable email activation
+         user.setActivated(true);
+      } else {
+         user.setPassword(existing.getPassword());
+         user.setActivated(existing.isActivated());
+      }
+
       return userRepository.save(user);
    }
 
-   private Set<Role> getRolesByCurrentUser(Optional<User> oCurrentUser, String roleName) {
+   private Set<Role> getRolesByCurrentUser(Optional<User> oCurrentUser, Set<Role> newRoles) {
       // If current user is empty then someone is trying to register who isn't in our system so it is basic user
+      String roleName = null;
       if (oCurrentUser.isEmpty()) {
          roleName = AvailableRoles.User.name();
       } else {
          User currentUser = oCurrentUser.get();
          boolean userRoleCompanyAdmin = SecurityUtils.userHasRole(currentUser, AvailableRoles.CompanyAdmin);
 
-         // If user is company admin he can add only agents
+         // If user is company admin and tries to assign some other role then return to agent role
          if (userRoleCompanyAdmin) {
-            boolean hasSuperAdminRole = SecurityUtils.userHasRole(currentUser, AvailableRoles.SuperAdmin);
-            // Assign agent role if current user is not super admin as super admin can add any role but company admin only agent
-            if (!hasSuperAdminRole) {
+            boolean hasSuperAdmin = SecurityUtils.hasRole(newRoles, AvailableRoles.SuperAdmin);
+            if (hasSuperAdmin) {
                roleName = AvailableRoles.Agent.name();
             }
          }
       }
 
-      Optional<Role> oRole = roleRepository.findOneByName(roleName);
-
-      if (oRole.isEmpty()) {
-         throw new IllegalArgumentException("Invalid role");
+      if (roleName != null) {
+         Optional<Role> oRole = roleRepository.findOneByName(roleName);
+         if (oRole.isEmpty()) {
+            throw new IllegalArgumentException("Invalid role");
+         }
+         Role role = oRole.get();
+         newRoles.add(role);
       }
-      Role role = oRole.get();
 
-      Set<Role> roles = new HashSet<>();
-      roles.add(role);
-      return roles;
+      return newRoles;
    }
 
    private void checkUserCompany(User user) {
