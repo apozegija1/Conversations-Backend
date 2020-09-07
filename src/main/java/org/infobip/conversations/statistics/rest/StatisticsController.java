@@ -84,8 +84,7 @@ public class StatisticsController {
    @GetMapping("/overview")
    public ResponseEntity<Response> getStatisticsOverviewForHomePage() {
       boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
-      boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
-      boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
+
 
       List<StatisticsOverview> statisticsOverviews = new ArrayList<>();
       if (isSuperAdmin) {
@@ -96,6 +95,8 @@ public class StatisticsController {
          return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
             .setResult(statisticsOverviewsForSuperAgent), HttpStatus.OK);
       } else {
+         boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
+         boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
          if (isCompanyAdmin) {
             User user = this.userService.getUserWithAuthorities().get();
             // Check company of the user and pass it to get statistics for company
