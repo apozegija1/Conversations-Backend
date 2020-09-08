@@ -96,21 +96,4 @@ public class CommunicationReviewController {
    }
 
 
-   /*
-   * STATISTICS ROUTES
-   * */
-
-   // average ratings by company and types
-      //1. ratings for company
-      //2. ratings for types
-      //3. ratings for types in company
-   @GetMapping("/statistics/company")
-   public ResponseEntity<Response> getAverageRatingForCompanyByCommunicationType(@RequestParam Map<String, String> queryParameters) {
-      Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
-      Long typeId = LongUtils.stringToLong(queryParameters.getOrDefault("typeId", null));
-      Float average = communicationReviewRepository.findAverageRatingForCompanybyCommunicationType(companyId, typeId);
-      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
-   }
-
-
 }
