@@ -1,8 +1,11 @@
 package org.infobip.conversations.communications.service;
 
+import org.infobip.conversations.common.model.MessageType;
+import org.infobip.conversations.common.service.MessageService;
 import org.infobip.conversations.communications.models.UserCommunication;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.infobip.conversations.communications.repository.model.Communication;
+import org.infobip.conversations.communications.utils.MessageUtils;
 import org.infobip.conversations.communicationtypes.repository.CommunicationTypeRepository;
 import org.infobip.conversations.communicationtypes.repository.model.CommunicationType;
 import org.infobip.conversations.companies.repository.model.Company;
@@ -22,26 +25,32 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 public class CommunicationService {
    private final CommunicationRepository communicationRepository;
-
    private final CommunicationTypeRepository communicationTypeRepository;
-
+   private final MessageService messageService;
    private final UserService userService;
 
    public CommunicationService(CommunicationRepository communicationRepository,
                                CommunicationTypeRepository communicationTypeRepository,
-                               UserService userService) {
+                               UserService userService,
+                               MessageService messageService) {
       this.communicationRepository = communicationRepository;
       this.communicationTypeRepository = communicationTypeRepository;
       this.userService = userService;
+      this.messageService = messageService;
    }
 
    public Communication save(Communication communication) {
-      Optional<CommunicationType> type = communicationTypeRepository.findOneByType(communication.getType().getType());
-      if (type.isEmpty()) {
+      Optional<CommunicationType> oType = communicationTypeRepository.findOneByType(communication.getType().getType());
+      if (oType.isEmpty()) {
          throw new IllegalArgumentException("Invalid communication type");
       }
+      CommunicationType type = oType.get();
 
-      communication.setType(type.get());
+      MessageType messageType = MessageUtils.getMessageTypeFromCommunicationType(type);
+      String agentCompany = communication.getAgent().getCompany().getName();
+      this.messageService.sendMessage(messageType, agentCompany, agentCompany,
+         "", communication.getText());
+      communication.setType(type);
       communication.setEndTime(new Timestamp(System.currentTimeMillis()));
       return communicationRepository.save(communication);
    }

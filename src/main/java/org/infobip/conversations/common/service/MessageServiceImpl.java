@@ -19,13 +19,13 @@ public class MessageServiceImpl implements MessageService {
    }
 
    @Override
-   public Response sendMessage(MessageType type, String toAddress,
+   public Response sendMessage(MessageType type, String from, String toAddress,
                                String subject, String body) {
       if (toAddress == null) {
          return new Response(ResultCode.ERROR, "Invalid to message.");
       } else {
          if (type == MessageType.Sms) {
-            this.smsService.sendSms(toAddress, subject, body);
+            this.smsService.sendSms(from, toAddress, subject, body);
          } else if(type == MessageType.Email) {
             this.emailSenderService.sendSimpleEmail(toAddress, subject, body);
          }
