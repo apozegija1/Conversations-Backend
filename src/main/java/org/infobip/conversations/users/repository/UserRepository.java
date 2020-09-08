@@ -1,5 +1,6 @@
 package org.infobip.conversations.users.repository;
 
+import org.infobip.conversations.statistics.models.IStatisticsOverview;
 import org.infobip.conversations.users.repository.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "ORDER BY MONTH(u.created_at) ASC", nativeQuery = true)
    List<Long> findAllUsersByMonthsForCurrentYear();
 
-   @Query(value = "SELECT count(u.id) AS Users, count(cp.id) AS Companies, CAST(AVG(res.c) AS INTEGER) AS AvgInYearByMonths " +
+   @Query(value = "SELECT count(u.id) AS numberOfElementsOfEntityOne, count(cp.id) AS numberOfElementsOfEntityTwo, CAST(AVG(res.c) AS CHAR) AS numberOfElementsOfEntityThree " +
       "FROM users u, companies cp, " +
       "(SELECT count(us.id) c " +
       "FROM users us " +
@@ -43,5 +44,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "GROUP BY MONTH(uS.created_at)) as res " +
       "WHERE u.company_id = cp.id " +
       "AND YEAR(u.created_at) = YEAR(NOW())", nativeQuery = true)
-   List<Integer> findAllStatisticOverviewsForSuperAgent();
+   List<IStatisticsOverview> findAllStatisticOverviewsForSuperAgent();
 }

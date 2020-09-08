@@ -90,7 +90,7 @@ public class StatisticsController {
       List<IStatisticsOverview> statisticsOverviews = new ArrayList<>();
       if (isSuperAdmin) {
          //data for superAdmin: number od users, number of companies and average number of registered users in this year
-            List<Integer> statisticsOverviewsForSuperAgent = null;
+            List<IStatisticsOverview> statisticsOverviewsForSuperAgent = null;
          statisticsOverviewsForSuperAgent = userRepository.findAllStatisticOverviewsForSuperAgent();
          System.out.println(statisticsOverviewsForSuperAgent + " << ");
          return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
