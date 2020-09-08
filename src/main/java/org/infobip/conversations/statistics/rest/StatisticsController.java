@@ -5,6 +5,7 @@ import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.common.utils.LongUtils;
 import org.infobip.conversations.communicationreviews.repository.CommunicationReviewRepository;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
+import org.infobip.conversations.statistics.models.IStatisticsOverview;
 import org.infobip.conversations.statistics.models.StatisticsOverview;
 import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
@@ -86,7 +87,7 @@ public class StatisticsController {
       boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
 
 
-      List<StatisticsOverview> statisticsOverviews = new ArrayList<>();
+      List<IStatisticsOverview> statisticsOverviews = new ArrayList<>();
       if (isSuperAdmin) {
          //data for superAdmin: number od users, number of companies and average number of registered users in this year
             List<Integer> statisticsOverviewsForSuperAgent = null;

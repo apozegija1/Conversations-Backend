@@ -1,6 +1,7 @@
 package org.infobip.conversations.communications.repository;
 
 import org.infobip.conversations.communications.repository.model.Communication;
+import org.infobip.conversations.statistics.models.IStatisticsOverview;
 import org.infobip.conversations.statistics.models.StatisticsOverview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -50,11 +51,12 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "ORDER BY MONTH(cm.start_time) ASC", nativeQuery = true)
    List<Long> findAllCallsByMonthsForCurrentYear(Long companyId, Long userId);
 
-   @Query(value = "SELECT count(ua.id) AS numberOfElementsOfEntityOne, count(cm.id) AS numberOfElementsOfEntityTwo, SEC_TO_TIME(AVG(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time)))) AS numberOfElementsOfEntityThree " +
+   @Query(value = "SELECT count(ua.id) AS numberOfElementsOfEntityOne, count(cm.id) AS numberOfElementsOfEntityTwo, " +
+      "CAST(sec_to_time(avg(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time)))) AS CHAR) AS numberOfElementsOfEntityThree " +
       "FROM communications cm, users ua, users uc, companies cp, communicationtypes ct " +
       "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND cm.type_id = ct.id " +
       "AND (cp.id = ?1 OR ua.id =?2) AND (cm.type_id = 2 OR cm.type_id = 3)", nativeQuery = true)
-   List<StatisticsOverview> findAllStatisticOverviewsForCompanyOrAgent(Long companyId, Long userId);
+   List<IStatisticsOverview> findAllStatisticOverviewsForCompanyOrAgent(Long companyId, Long userId);
 
 }
 
