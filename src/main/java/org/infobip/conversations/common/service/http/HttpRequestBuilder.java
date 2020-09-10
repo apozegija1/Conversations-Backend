@@ -1,5 +1,7 @@
 package org.infobip.conversations.common.service.http;
 
+import org.infobip.conversations.common.model.ExternalAuthDto;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -10,6 +12,7 @@ public class HttpRequestBuilder {
    private final URL url;
    private String contentType = "application/json";
    private String token = null;
+   private String authType = "Bearer";
    private byte[] data = null;
 
    public HttpRequestBuilder(URL url) {
@@ -21,8 +24,12 @@ public class HttpRequestBuilder {
       return this;
    }
 
-   public HttpRequestBuilder addAuth(String token) {
-      this.token = token;
+   public HttpRequestBuilder addAuth(ExternalAuthDto authDto) {
+      this.token = authDto.token;
+      if (authDto.type != null) {
+         this.authType = authDto.type;
+      }
+
       return this;
    }
 
@@ -50,7 +57,7 @@ public class HttpRequestBuilder {
    public HttpURLConnection build() throws IOException {
       HttpURLConnection con = this.getBaseHttpConnection();
       if (this.token != null) {
-         String basicAuth = "Bearer " + this.token;
+         String basicAuth = this.authType + " " + this.token;
          con.setRequestProperty ("Authorization", basicAuth);
       }
 
