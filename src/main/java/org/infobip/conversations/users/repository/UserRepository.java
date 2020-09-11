@@ -1,5 +1,6 @@
 package org.infobip.conversations.users.repository;
 
+import org.infobip.conversations.statistics.models.IChartStatisticsOverview;
 import org.infobip.conversations.statistics.models.IStatisticsOverview;
 import org.infobip.conversations.users.repository.model.User;
 import org.springframework.data.domain.Page;
@@ -29,12 +30,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "AND cp.id = ?1")
    Page<User> findAllUsersForCompany(Long companyId, Pageable pageable);
 
-   @Query(value = "SELECT count(u.id) AS Users, MONTH(u.created_at) AS 'Month' " +
+   @Query(value = "SELECT count(u.id) AS 'number', MONTHNAME(u.created_at) AS 'month' " +
       "FROM users u " +
       "WHERE YEAR(u.created_at) = YEAR(NOW()) " +
       "GROUP BY MONTH(u.created_at) " +
       "ORDER BY MONTH(u.created_at) ASC", nativeQuery = true)
-   List<Long> findAllUsersByMonthsForCurrentYear();
+   List<IChartStatisticsOverview> findAllUsersByMonthsForCurrentYear();
 
    @Query(value = "SELECT count(u.id) AS numberOfElementsOfEntityOne, count(cp.id) AS numberOfElementsOfEntityTwo, CAST(AVG(res.c) AS CHAR) AS numberOfElementsOfEntityThree " +
       "FROM users u, companies cp, " +
