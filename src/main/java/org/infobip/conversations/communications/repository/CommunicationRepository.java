@@ -1,7 +1,8 @@
 package org.infobip.conversations.communications.repository;
 
 import org.infobip.conversations.communications.repository.model.Communication;
-import org.infobip.conversations.statistics.models.StatisticsOverview;
+import org.infobip.conversations.statistics.models.IChartStatisticsOverview;
+import org.infobip.conversations.statistics.models.IStatisticsOverview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -41,20 +42,21 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
    Long findCommunicationCountForPeriod(Long companyId, Long agentId, Timestamp fromDate, Timestamp toDate);
 
 
-   @Query(value = "SELECT count(cm.id) AS Calls, MONTH(cm.start_time) AS Month " +
+   @Query(value = "SELECT count(cm.id) AS 'number', MONTHNAME(cm.start_time) AS 'month' " +
       "FROM communications cm, users ua, users uc, companies cp, communicationtypes ct " +
       "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND cm.type_id = ct.id " +
       "AND (cp.id = ?1 OR ua.id =?2) AND (cm.type_id = 2 OR cm.type_id = 3) " +
       "AND YEAR(cm.start_time) = YEAR(NOW()) " +
       "GROUP BY MONTH(cm.start_time) " +
       "ORDER BY MONTH(cm.start_time) ASC", nativeQuery = true)
-   List<Long> findAllCallsByMonthsForCurrentYear(Long companyId, Long userId);
+   List<IChartStatisticsOverview> findAllCallsByMonthsForCurrentYear(Long companyId, Long userId);
 
-   @Query(value = "SELECT count(ua.id) AS numberOfElementsOfEntityOne, count(cm.id) AS numberOfElementsOfEntityTwo, SEC_TO_TIME(AVG(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time)))) AS numberOfElementsOfEntityThree " +
+   @Query(value = "SELECT count(ua.id) AS numberOfElementsOfEntityOne, count(cm.id) AS numberOfElementsOfEntityTwo, " +
+      "CAST(time_format(CAST(sec_to_time(avg(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time)))) AS CHAR), '%H:%i:%s') AS CHAR) AS numberOfElementsOfEntityThree " +
       "FROM communications cm, users ua, users uc, companies cp, communicationtypes ct " +
       "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND cm.type_id = ct.id " +
       "AND (cp.id = ?1 OR ua.id =?2) AND (cm.type_id = 2 OR cm.type_id = 3)", nativeQuery = true)
-   List<StatisticsOverview> findAllStatisticOverviewsForCompanyOrAgent(Long companyId, Long userId);
+   List<IStatisticsOverview> findAllStatisticOverviewsForCompanyOrAgent(Long companyId, Long userId);
 
 }
 

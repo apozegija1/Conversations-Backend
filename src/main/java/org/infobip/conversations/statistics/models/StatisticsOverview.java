@@ -1,13 +1,11 @@
 package org.infobip.conversations.statistics.models;
 
-import java.sql.Time;
-
-public class StatisticsOverview {
+public class StatisticsOverview implements IStatisticsOverview{
    public Long numberOfElementsOfEntityOne;
    public Long numberOfElementsOfEntityTwo;
-   public Time numberOfElementsOfEntityThree;
+   public String numberOfElementsOfEntityThree;
 
-   public StatisticsOverview(Long numberOfElementsOfEntityOne, Long numberOfElementsOfEntityTwo, Time numberOfElementsOfEntityThree) {
+   public StatisticsOverview(Long numberOfElementsOfEntityOne, Long numberOfElementsOfEntityTwo, String numberOfElementsOfEntityThree) {
       this.numberOfElementsOfEntityOne = numberOfElementsOfEntityOne;
       this.numberOfElementsOfEntityTwo = numberOfElementsOfEntityTwo;
       this.numberOfElementsOfEntityThree = numberOfElementsOfEntityThree;
@@ -29,11 +27,11 @@ public class StatisticsOverview {
       this.numberOfElementsOfEntityTwo = numberOfElementsOfEntityTwo;
    }
 
-   public Time getNumberOfElementsOfEntityThree() {
+   public String getNumberOfElementsOfEntityThree() {
       return numberOfElementsOfEntityThree;
    }
 
-   public void setNumberOfElementsOfEntityThree(Time numberOfElementsOfEntityThree) {
+   public void setNumberOfElementsOfEntityThree(String numberOfElementsOfEntityThree) {
       this.numberOfElementsOfEntityThree = numberOfElementsOfEntityThree;
    }
 }
