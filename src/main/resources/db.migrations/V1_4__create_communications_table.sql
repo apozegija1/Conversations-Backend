@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `communications` (
    `start_time` timestamp NOT NULL,
    `end_time` timestamp NOT NULL,
    `text` varchar(255) NOT NULL,
-   `messageId` varchar(255) NULL,
+   `message_id` varchar(255) NULL,
    PRIMARY KEY (`id`),
    FOREIGN KEY `fk_communication_agent1_idx` (`agent_id`) REFERENCES users(id) ON DELETE SET NULL, # If agent is removed we can still save data related to their communication
    FOREIGN KEY `fk_communication_customer1_idx` (`customer_id`) REFERENCES users(id) ON DELETE SET NULL,

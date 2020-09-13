@@ -53,7 +53,7 @@ public class Communication {
    @Size(min = 4, max = 400)
    private String text;
 
-   @Column(name = "messageId", length = 400)
+   @Column(name = "message_id", length = 400)
    @Size(min = 4, max = 400)
    private String messageId;
 

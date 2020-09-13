@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.Nullable;
 import org.hibernate.annotations.BatchSize;
+import org.infobip.conversations.common.Constant;
 import org.infobip.conversations.common.validators.ValidPassword;
 import org.infobip.conversations.companies.repository.model.Company;
 import org.springframework.data.annotation.CreatedDate;
@@ -88,7 +89,7 @@ public class User {
    private Set<Role> roles = new HashSet<>();
 
    @CreatedDate
-   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Europe/Berlin")
+   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= Constant.TIMESTAMP_FORMAT, timezone="Europe/Berlin")
    @Column(name = "created_at", nullable = false, updatable = false)
    private Timestamp createdAt;
 

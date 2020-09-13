@@ -29,7 +29,7 @@ public class SmsClientService {
          RequestClient client = this.getRequestClient();
          jsonReturn = client.post(jsonObject, this.getUrl());
       } catch (IOException e) {
-
+         System.out.println(e.getLocalizedMessage());
       }
 
       return jsonReturn;

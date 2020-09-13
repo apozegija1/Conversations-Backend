@@ -6,7 +6,7 @@ import org.infobip.conversations.communicationtypes.repository.model.Communicati
 
 public class MessageUtils {
    public static MessageType getMessageTypeFromCommunicationType(CommunicationType type) {
-      if (type.getType().equals(AvailableCommunicationType.SMS.name())) {
+      if (type.getType().equals(AvailableCommunicationType.Sms.name())) {
          return MessageType.Sms;
       }
 

@@ -85,7 +85,7 @@ public class RequestClient {
          if (json == null) return null;
          jsonObjectReturn = new JSONObject(json);
       } catch (IOException e) {
-
+         System.out.println(e.getLocalizedMessage());
       }
       return jsonObjectReturn;
    }

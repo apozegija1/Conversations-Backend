@@ -1,5 +1,6 @@
 package org.infobip.conversations.users.repository;
 
+import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "WHERE u.company.id = cp.id " +
       "AND cp.id = ?1")
    Page<User> findAllUsersForCompany(Long companyId, Pageable pageable);
+
+   @Query(value =  "SELECT * FROM users as us, userroles ur, roles r " +
+      "WHERE us.id = ur.user_id  AND ur.role_id = r.id AND r.role_name = ?1", nativeQuery = true)
+   Page<User> findAllUsersByRole(String role, Pageable pageable);
 
    @Query(value = "SELECT count(u.id) AS Users, MONTH(u.created_at) AS 'Month' " +
       "FROM users u " +
