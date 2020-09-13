@@ -6,11 +6,15 @@ import org.infobip.conversations.users.repository.RoleRepository;
 import org.infobip.conversations.users.repository.model.Role;
 import org.infobip.conversations.users.utils.PasswordUtils;
 import org.infobip.conversations.users.utils.SecurityUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.repository.UserRepository;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,6 +38,11 @@ public class UserService {
    public Company getCurrentUserCompany() {
       Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
       return user.map(User::getCompany).orElse(null);
+   }
+
+   @Transactional(readOnly = true)
+   public Page<User> getUsersByRole(AvailableRoles role, Pageable pageable) {
+      return userRepository.findAllUsersByRole(role.name(), pageable);
    }
 
    public User saveUserWithRole(User user) {

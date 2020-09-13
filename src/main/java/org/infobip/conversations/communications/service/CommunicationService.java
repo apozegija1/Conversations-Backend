@@ -1,8 +1,15 @@
 package org.infobip.conversations.communications.service;
 
+import org.infobip.conversations.common.Response;
+import org.infobip.conversations.common.ResultCode;
+import org.infobip.conversations.common.model.Message;
+import org.infobip.conversations.common.model.MessageType;
+import org.infobip.conversations.common.service.MessageService;
+import org.infobip.conversations.communications.models.AvailableCommunicationType;
 import org.infobip.conversations.communications.models.UserCommunication;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.infobip.conversations.communications.repository.model.Communication;
+import org.infobip.conversations.communications.utils.MessageUtils;
 import org.infobip.conversations.communicationtypes.repository.CommunicationTypeRepository;
 import org.infobip.conversations.communicationtypes.repository.model.CommunicationType;
 import org.infobip.conversations.companies.repository.model.Company;
@@ -12,7 +19,7 @@ import org.infobip.conversations.users.service.UserService;
 import org.infobip.conversations.users.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.lang.module.ResolutionException;
 import java.sql.Timestamp;
 import java.util.*;
 import static java.util.stream.Collectors.groupingBy;
@@ -22,26 +29,39 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 public class CommunicationService {
    private final CommunicationRepository communicationRepository;
-
    private final CommunicationTypeRepository communicationTypeRepository;
-
+   private final MessageService messageService;
    private final UserService userService;
 
    public CommunicationService(CommunicationRepository communicationRepository,
                                CommunicationTypeRepository communicationTypeRepository,
-                               UserService userService) {
+                               UserService userService,
+                               MessageService messageService) {
       this.communicationRepository = communicationRepository;
       this.communicationTypeRepository = communicationTypeRepository;
       this.userService = userService;
+      this.messageService = messageService;
    }
 
    public Communication save(Communication communication) {
-      Optional<CommunicationType> type = communicationTypeRepository.findOneByType(communication.getType().getType());
-      if (type.isEmpty()) {
+      Optional<CommunicationType> oType = communicationTypeRepository.findOneByType(communication.getType().getType());
+      if (oType.isEmpty()) {
          throw new IllegalArgumentException("Invalid communication type");
       }
-      communication.setType(type.get());
+
+      CommunicationType type = oType.get();
+      communication.setType(type);
       communication.setEndTime(new Timestamp(System.currentTimeMillis()));
+
+      // Check if type is sms and if user has entered his phone number
+      if (type.getType().equals(AvailableCommunicationType.Sms.name())) {
+         Response response = this.sendMessage(type, communication);
+         // If there was error in sending message return exception
+         if (response.status == ResultCode.ERROR) {
+            throw new ResolutionException(response.message);
+         }
+      }
+
       return communicationRepository.save(communication);
    }
 
@@ -81,5 +101,24 @@ public class CommunicationService {
          .stream()
          .map((s-> new UserCommunication(s.getKey(), s.getValue())))
          .collect(toList());
+   }
+
+   private Response sendMessage(CommunicationType type, Communication communication) {
+      if (communication.getCustomer().getPhone() == null) {
+         throw new IllegalArgumentException("User doesn't have phone to which to send message");
+      }
+      if (communication.getAgent().getCompany() == null) {
+         throw new IllegalArgumentException("Agent doesn't have company in which it works");
+      }
+
+      MessageType messageType = MessageUtils.getMessageTypeFromCommunicationType(type);
+      String agentCompany = communication.getAgent().getCompany().getName();
+      String userPhone = communication.getCustomer().getPhone();
+
+      String messageId = UUID.randomUUID().toString();
+      Message message = new Message(messageId, agentCompany, userPhone,
+         "", communication.getText());
+      communication.setMessageId(messageId);
+      return this.messageService.sendMessage(messageType, message);
    }
 }

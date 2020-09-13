@@ -53,6 +53,10 @@ public class Communication {
    @Size(min = 4, max = 400)
    private String text;
 
+   @Column(name = "message_id", length = 400)
+   @Size(min = 4, max = 400)
+   private String messageId;
+
    public Communication() {}
 
    public Long getId() {
@@ -109,5 +113,13 @@ public class Communication {
 
    public void setText(String text) {
       this.text = text;
+   }
+
+   public String getMessageId() {
+      return messageId;
+   }
+
+   public void setMessageId(String messageId) {
+      this.messageId = messageId;
    }
 }

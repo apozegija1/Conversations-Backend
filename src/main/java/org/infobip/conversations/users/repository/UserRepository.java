@@ -30,6 +30,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "AND cp.id = ?1")
    Page<User> findAllUsersForCompany(Long companyId, Pageable pageable);
 
+   @Query(value =  "SELECT * FROM users as us, userroles ur, roles r " +
+      "WHERE us.id = ur.user_id  AND ur.role_id = r.id AND r.role_name = ?1", nativeQuery = true)
+   Page<User> findAllUsersByRole(String role, Pageable pageable);
+
+
    @Query(value = "SELECT count(u.id) AS 'number', MONTHNAME(u.created_at) AS 'month' " +
       "FROM users u " +
       "WHERE YEAR(u.created_at) = YEAR(NOW()) " +
@@ -37,7 +42,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "ORDER BY MONTH(u.created_at) ASC", nativeQuery = true)
    List<IChartStatisticsOverview> findAllUsersByMonthsForCurrentYear();
 
-   @Query(value = "SELECT count(u.id) AS numberOfElementsOfEntityOne, count(cp.id) AS numberOfElementsOfEntityTwo, CAST(AVG(res.c) AS CHAR) AS numberOfElementsOfEntityThree " +
+   @Query(value = "SELECT count(u.id) AS numberOfElementsOfEntityOne, count(cp.id) AS numberOfElementsOfEntityTwo, " +
+      "CAST(AVG(res.c) AS CHAR) AS numberOfElementsOfEntityThree " +
       "FROM users u, companies cp, " +
       "(SELECT count(us.id) c " +
       "FROM users us " +

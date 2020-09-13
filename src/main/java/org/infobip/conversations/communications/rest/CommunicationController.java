@@ -29,6 +29,8 @@ public class CommunicationController {
 
     @Autowired
     private CommunicationService communicationService;
+
+    @Autowired
     private UserService userService;
 
     @Autowired

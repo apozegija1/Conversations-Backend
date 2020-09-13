@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `users` (
    `phone` varchar(255) NULL,
    `company_id` int(11) unsigned DEFAULT NULL ,
    `activated` tinyint DEFAULT FALSE,
-   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP ,
+   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY (`id`),
    UNIQUE KEY `unique_user_username` (`username`),
    FOREIGN KEY `fk_user_company1_idx` (`company_id`) REFERENCES companies(id) ON DELETE CASCADE

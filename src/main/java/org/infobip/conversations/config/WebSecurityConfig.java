@@ -97,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
          .antMatchers(HttpMethod.GET,  "/api/companies/**").hasAnyAuthority(String.valueOf(AvailableRoles.SuperAdmin), String.valueOf(AvailableRoles.CompanyAdmin))
          .antMatchers("/api/companies").hasAuthority(String.valueOf(AvailableRoles.SuperAdmin))
          //{accountId:\\d+}
-         .antMatchers("/api/users").hasAnyAuthority(String.valueOf(AvailableRoles.SuperAdmin), String.valueOf(AvailableRoles.CompanyAdmin))
+         .antMatchers("/api/users").hasAnyAuthority(String.valueOf(AvailableRoles.SuperAdmin), String.valueOf(AvailableRoles.CompanyAdmin), String.valueOf(AvailableRoles.Agent))
          .antMatchers("/api/user").authenticated()
          .antMatchers("/api/communications/users")
             .hasAnyAuthority(String.valueOf(AvailableRoles.Agent), String.valueOf(AvailableRoles.CompanyAdmin), String.valueOf(AvailableRoles.User))

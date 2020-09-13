@@ -2,7 +2,6 @@ package org.infobip.conversations.users.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
-import org.infobip.conversations.common.utils.JPABeanUtils;
 import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
@@ -13,9 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
-
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
 @RestController
@@ -65,6 +61,7 @@ public class UserRestController {
    public ResponseEntity<Response> readAll(Pageable pageable) {
       boolean isSuperAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.SuperAdmin);
       boolean isCompanyAdmin = SecurityUtils.loggedInUserHasRole(AvailableRoles.CompanyAdmin);
+      boolean isAgent = SecurityUtils.loggedInUserHasRole(AvailableRoles.Agent);
       Page<User> users = null;
       if (isSuperAdmin) {
          users = userRepository.findAll(pageable);
@@ -78,6 +75,8 @@ public class UserRestController {
                .status(HttpStatus.BAD_REQUEST)
                .body(new Response(ResultCode.ERROR, "Invalid user company"));
          }
+      } else if(isAgent) {
+         users = userService.getUsersByRole(AvailableRoles.User, pageable);
       }
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(users), HttpStatus.OK);
