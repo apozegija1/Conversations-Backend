@@ -3,7 +3,6 @@ package org.infobip.conversations.common.service.http;
 import org.infobip.conversations.common.model.ExternalAuthDto;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;

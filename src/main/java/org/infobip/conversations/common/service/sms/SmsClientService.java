@@ -8,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
-
 import java.net.MalformedURLException;
-
 import java.net.URL;
 
 @Service
@@ -21,9 +19,11 @@ public class SmsClientService {
    @Value("${sms.api_key}")
    private String apiKey;
 
-   private String authType = "App";
+   @Value("${sms.api_auth_type}")
+   private String authType;
 
-   private final String path = "/sms/2/text/advanced";
+   @Value("${sms.api_path}")
+   private String path;
 
    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

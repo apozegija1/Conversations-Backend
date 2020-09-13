@@ -19,7 +19,6 @@ import org.infobip.conversations.users.service.UserService;
 import org.infobip.conversations.users.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.lang.module.ResolutionException;
 import java.sql.Timestamp;
 import java.util.*;
