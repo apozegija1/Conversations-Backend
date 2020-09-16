@@ -4,7 +4,9 @@ import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
 import org.infobip.conversations.common.model.Message;
 import org.infobip.conversations.common.model.MessageType;
+import org.infobip.conversations.common.model.WebRtcTokenResponse;
 import org.infobip.conversations.common.service.MessageService;
+import org.infobip.conversations.common.service.webrtc.WebRtcService;
 import org.infobip.conversations.communications.models.AvailableCommunicationType;
 import org.infobip.conversations.communications.models.UserCommunication;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
@@ -32,15 +34,18 @@ public class CommunicationService {
    private final CommunicationTypeRepository communicationTypeRepository;
    private final MessageService messageService;
    private final UserService userService;
+   private final WebRtcService webRtcService;
 
    public CommunicationService(CommunicationRepository communicationRepository,
                                CommunicationTypeRepository communicationTypeRepository,
                                UserService userService,
-                               MessageService messageService) {
+                               MessageService messageService,
+                               WebRtcService webRtcService) {
       this.communicationRepository = communicationRepository;
       this.communicationTypeRepository = communicationTypeRepository;
       this.userService = userService;
       this.messageService = messageService;
+      this.webRtcService = webRtcService;
    }
 
    public Communication save(Communication communication) {
@@ -101,6 +106,10 @@ public class CommunicationService {
          .stream()
          .map((s-> new UserCommunication(s.getKey(), s.getValue())))
          .collect(toList());
+   }
+
+   public WebRtcTokenResponse getWebrtcToken(User user) {
+      return this.webRtcService.obtainToken(user);
    }
 
    private Response sendMessage(CommunicationType type, Communication communication) {

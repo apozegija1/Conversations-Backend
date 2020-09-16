@@ -208,5 +208,7 @@ public class User {
       this.company = company;
    }
 
-
+   public String getFullName() {
+      return this.firstname + " " + this.lastname;
+   }
 }
