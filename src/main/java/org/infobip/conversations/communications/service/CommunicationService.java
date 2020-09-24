@@ -52,7 +52,6 @@ public class CommunicationService {
       CommunicationType type = oType.get();
       communication.setType(type);
       communication.setEndTime(new Timestamp(System.currentTimeMillis()));
-
       // Check if type is sms and if user has entered his phone number
       if (type.getType().equals(AvailableCommunicationType.Sms.name())) {
          Response response = this.sendMessage(type, communication);
@@ -110,11 +109,9 @@ public class CommunicationService {
       if (communication.getAgent().getCompany() == null) {
          throw new IllegalArgumentException("Agent doesn't have company in which it works");
       }
-
       MessageType messageType = MessageUtils.getMessageTypeFromCommunicationType(type);
       String agentCompany = communication.getAgent().getCompany().getName();
       String userPhone = communication.getCustomer().getPhone();
-
       String messageId = UUID.randomUUID().toString();
       Message message = new Message(messageId, agentCompany, userPhone,
          "", communication.getText());

@@ -7,11 +7,17 @@ INSERT INTO users (id, username, password, first_name, last_name, email, gender,
 
 INSERT INTO userroles (user_id, role_id) VALUES (1, 2) WHERE NOT EXISTS (SELECT * FROM userroles);
 
-INSERT INTO users (id, username, password, first_name, last_name, email, gender, phone, company_id, activated, created_at) VALUES (2, 'admin', '$2a$08$lDnHPz7eUkSi6ao14Twuau08mzhWrL4kyZGGU5xfiGALO/Vxd5DOi', 'admin', 'admin', 'admin@admin.ba', null, null, null,  1, CURRENT_TIMESTAMP);
+INSERT INTO users (id, username, password, first_name, last_name, email, gender, phone, company_id, activated, created_at) VALUES (2, 'SuperAdmin', '$2a$10$Vs28N6SlCcb78RtesA8okeKOYkXG76VFGwTnMIxmeHRV54ojlyvAG', 'superadmin', 'superadmin', 'superadmin@admin.ba', null, null, null,  1, CURRENT_TIMESTAMP);
+INSERT INTO users (id, username, password, first_name, last_name, email, gender, phone, company_id, activated, created_at) VALUES (3, 'CompanyAdmin', '$2a$10$Vs28N6SlCcb78RtesA8okeKOYkXG76VFGwTnMIxmeHRV54ojlyvAG', 'companyadmin', 'companyadmin', 'companyadmin@admin.ba', null, null, 1,  1, CURRENT_TIMESTAMP);
+INSERT INTO users (id, username, password, first_name, last_name, email, gender, phone, company_id, activated, created_at) VALUES (4, 'Agent', '$2a$10$Vs28N6SlCcb78RtesA8okeKOYkXG76VFGwTnMIxmeHRV54ojlyvAG', 'agent', 'agent', 'agent@admin.ba', null, null, 1,  1, CURRENT_TIMESTAMP);
+INSERT INTO users (id, username, password, first_name, last_name, email, gender, phone, company_id, activated, created_at) VALUES (5, 'User', '$2a$10$Vs28N6SlCcb78RtesA8okeKOYkXG76VFGwTnMIxmeHRV54ojlyvAG', 'user', 'user', 'user@admin.ba', null, null, null,  1, CURRENT_TIMESTAMP);
 
 INSERT INTO userroles (user_id, role_id) VALUES (2, 2);
+INSERT INTO userroles (user_id, role_id) VALUES (3, 3);
+INSERT INTO userroles (user_id, role_id) VALUES (4, 4);
+INSERT INTO userroles (user_id, role_id) VALUES (5, 1);
 
 
-INSERT INTO communicationtypes (id, type) VALUES (1, 'SMS');
+INSERT INTO communicationtypes (id, type) VALUES (1, 'Sms');
 INSERT INTO communicationtypes (id, type) VALUES (2, 'Video');
 INSERT INTO communicationtypes (id, type) VALUES (3, 'Audio');
