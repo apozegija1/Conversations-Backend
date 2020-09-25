@@ -51,12 +51,40 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "ORDER BY MONTH(cm.start_time) ASC", nativeQuery = true)
    List<IChartStatisticsOverview> findAllCallsByMonthsForCurrentYear(Long companyId, Long userId);
 
-   @Query(value = "SELECT count(ua.id) AS numberOfElementsOfEntityOne, count(cm.id) AS numberOfElementsOfEntityTwo, " +
-      "CAST(time_format(CAST(sec_to_time(avg(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time)))) AS CHAR), '%H:%i:%s') AS CHAR) AS numberOfElementsOfEntityThree " +
-      "FROM communications cm, users ua, users uc, companies cp, communicationtypes ct " +
-      "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND cm.type_id = ct.id " +
-      "AND (cp.id = ?1 OR ua.id =?2) AND (cm.type_id = 2 OR cm.type_id = 3)", nativeQuery = true)
-   List<IStatisticsOverview> findAllStatisticOverviewsForCompanyOrAgent(Long companyId, Long userId);
+   @Query(value = "SELECT count(cm.id) AS 'number', MONTHNAME(cm.start_time) AS 'month' " +
+      "FROM communications cm, users ua, users uc, communicationtypes ct " +
+      "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND cm.type_id = ct.id " +
+      "AND uc.id =?1 AND (cm.type_id = 2 OR cm.type_id = 3) " +
+      "AND YEAR(cm.start_time) = YEAR(NOW()) " +
+      "GROUP BY MONTH(cm.start_time) " +
+      "ORDER BY MONTH(cm.start_time) ASC", nativeQuery = true)
+   List<IChartStatisticsOverview> findAllCallsByMonthsForCurrentYearForUser(Long userId);
 
+
+   @Query(value = "SELECT agents.one AS numberOfElementsOfEntityOne, calls.two AS numberOfElementsOfEntityTwo, average.three AS numberOfElementsOfEntityThree " +
+      "FROM (SELECT count(ua.id) as one " +
+      "      FROM users ua, companies cp " +
+      "      WHERE ua.company_id = cp.id AND ua.company_id = ?1) as agents, " +
+      "(SELECT count(cm.id) as two" +
+      "     FROM communications cm, communicationtypes ct, users ua, users uc, companies cp" +
+      "     WHERE cm.type_id = ct.id AND (cm.type_id = 2 OR cm.type_id = 3) and cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND ua.company_id = ?1) as calls," +
+      "(SELECT CAST(time_format(CAST(sec_to_time(avg(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time)))) AS CHAR), '%H:%i:%s') AS CHAR) AS three" +
+      "     FROM communications cm, communicationtypes ct, users ua, users uc, companies cp" +
+      "     WHERE cm.type_id = ct.id AND (cm.type_id = 2 OR cm.type_id = 3) and cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND ua.company_id = ?1) as average", nativeQuery = true)
+   List<IStatisticsOverview> findAllStatisticOverviewsForCompany(Long companyId);
+
+   @Query(value = "SELECT sms.one AS numberOfElementsOfEntityOne, calls.two AS numberOfElementsOfEntityTwo, average.three AS numberOfElementsOfEntityThree " +
+      "FROM (SELECT count(cm.id) as one" +
+      "      FROM communications cm, communicationtypes ct, users ua, users uc " +
+      "      WHERE cm.type_id = ct.id AND cm.type_id = 1  AND cm.agent_id = ua.id AND cm.customer_id = uc.id AND (ua.id = ?1 OR uc.id = ?2)) as sms," +
+      " (SELECT count(cm.id) as two" +
+      "     FROM communications cm, communicationtypes ct, users ua, users uc" +
+      "     WHERE cm.type_id = ct.id AND (cm.type_id = 2 OR cm.type_id = 3) and cm.agent_id = ua.id AND cm.customer_id = uc.id and (ua.id = ?1 OR uc.id = ?2)) as calls," +
+      " (SELECT CAST(time_format(CAST(sec_to_time(avg(TIME_TO_SEC(TIMEDIFF(cm.end_time, cm.start_time)))) AS CHAR), '%H:%i:%s') AS CHAR) AS three" +
+      "     FROM communications cm, communicationtypes ct, users ua, users uc " +
+      "     WHERE cm.type_id = ct.id AND (cm.type_id = 2 OR cm.type_id = 3) and cm.agent_id = ua.id AND cm.customer_id = uc.id and (ua.id = ?1 OR uc.id = ?2)) as average", nativeQuery = true)
+   List<IStatisticsOverview> findAllStatisticOverviewsForAgentOrUser(Long agentId, Long userId);
+
+//cm.type_id 1-sms 2-video 3-audio
 }
 

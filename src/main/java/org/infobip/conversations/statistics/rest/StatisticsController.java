@@ -103,7 +103,7 @@ public class StatisticsController {
             User user = this.userService.getUserWithAuthorities().get();
             // Check company of the user and pass it to get statistics for company
             if (user.getCompany() != null) {
-               statisticsOverviews = communicationRepository.findAllStatisticOverviewsForCompanyOrAgent(user.getCompany().getId(), null);
+               statisticsOverviews = communicationRepository.findAllStatisticOverviewsForCompany(user.getCompany().getId());
             } else {
                return ResponseEntity
                   .status(HttpStatus.BAD_REQUEST)
@@ -111,7 +111,10 @@ public class StatisticsController {
             }
          } else if (isAgent) {
             User user = this.userService.getUserWithAuthorities().get();
-            statisticsOverviews = communicationRepository.findAllStatisticOverviewsForCompanyOrAgent(null, user.getId());
+            statisticsOverviews = communicationRepository.findAllStatisticOverviewsForAgentOrUser(user.getId(), null);
+         } else {
+            User user = this.userService.getUserWithAuthorities().get();
+            statisticsOverviews = communicationRepository.findAllStatisticOverviewsForAgentOrUser(null, user.getId());
          }
 
          return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
@@ -143,6 +146,11 @@ public class StatisticsController {
       } else if(isAgent) {
          User user = this.userService.getUserWithAuthorities().get();
          elementsCount = communicationRepository.findAllCallsByMonthsForCurrentYear(null, user.getId());
+      } else {
+
+         User user = this.userService.getUserWithAuthorities().get();
+         elementsCount = communicationRepository.findAllCallsByMonthsForCurrentYearForUser(user.getId());
+
       }
 
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
