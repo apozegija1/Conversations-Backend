@@ -6,8 +6,8 @@ import org.infobip.conversations.common.utils.LongUtils;
 import org.infobip.conversations.communicationreviews.repository.CommunicationReviewRepository;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.infobip.conversations.statistics.models.IChartStatisticsOverview;
+import org.infobip.conversations.statistics.models.IReports;
 import org.infobip.conversations.statistics.models.IStatisticsOverview;
-import org.infobip.conversations.statistics.models.StatisticsOverview;
 import org.infobip.conversations.users.AvailableRoles;
 import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
@@ -52,11 +52,10 @@ public class StatisticsController {
    @GetMapping("/avgCommunicationDuration")
    public ResponseEntity<Response> getAverageDuration(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
-      Long agentId = LongUtils.stringToLong(queryParameters.getOrDefault("agentId", null));
       Timestamp fromDate = Timestamp.valueOf((queryParameters.getOrDefault("fromDate", null)));
       Timestamp toDate = Timestamp.valueOf((queryParameters.getOrDefault("toDate", null)));
 
-      Float average = communicationRepository.findAverageDurationInSeconds(companyId, agentId, fromDate, toDate);
+      List<IReports> average = communicationRepository.findAverageDurationInSeconds(companyId, fromDate, toDate);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 
@@ -65,19 +64,17 @@ public class StatisticsController {
    @GetMapping("/communicationCount")
    public ResponseEntity<Response> getCommunicationCountForPeriod(@RequestParam Map<String, String> queryParameters) {
       Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
-      Long agentId = LongUtils.stringToLong(queryParameters.getOrDefault("agentId", null));
       Timestamp fromDate = Timestamp.valueOf((queryParameters.getOrDefault("fromDate", null)));
       Timestamp toDate = Timestamp.valueOf((queryParameters.getOrDefault("toDate", null)));
-
-      Long average = communicationRepository.findCommunicationCountForPeriod(companyId, agentId, fromDate, toDate);
+      List<IReports> average = communicationRepository.findCommunicationCountForPeriod(companyId, fromDate, toDate);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 
    @GetMapping("/company")
    public ResponseEntity<Response> getAverageRatingForCompanyByCommunicationType(@RequestParam Map<String, String> queryParameters) {
-      Long companyId = LongUtils.stringToLong(queryParameters.getOrDefault("companyId", null));
       Long typeId = LongUtils.stringToLong(queryParameters.getOrDefault("typeId", null));
-      Float average = communicationReviewRepository.findAverageRatingForCompanybyCommunicationType(companyId, typeId);
+      User user = this.userService.getUserWithAuthorities().get();
+      Float average = communicationReviewRepository.findAverageRatingForCompanybyCommunicationType(user.getCompany().getId(), typeId);
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(average), HttpStatus.OK);
    }
 
