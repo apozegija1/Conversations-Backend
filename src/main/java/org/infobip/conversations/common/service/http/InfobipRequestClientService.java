@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -30,11 +29,15 @@ public class InfobipRequestClientService {
       try {
          RequestClient client = this.getRequestClient(authType);
          jsonReturn = client.post(jsonObject, this.getUrl(path));
-      } catch (IOException e) {
+      } catch (MalformedURLException e) {
          logger.error(e.getLocalizedMessage(), e);
       }
 
       return jsonReturn;
+   }
+
+   public String getApiKey() {
+      return this.apiKey;
    }
 
    private URL getUrl(String path) throws MalformedURLException {

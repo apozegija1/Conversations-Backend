@@ -17,6 +17,9 @@ public class WebRtcService {
    @Value("${infobip.webrtc.api_path}")
    private String path;
 
+   @Value("${infobip.sms.api_auth_type}")
+   private String authType;
+
    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
    private final InfobipRequestClientService infobipRequestClientService;
@@ -26,12 +29,13 @@ public class WebRtcService {
    }
 
    private JSONObject post(JSONObject jsonObject) {
-      return this.infobipRequestClientService.post(jsonObject, null, this.path);
+      return this.infobipRequestClientService.post(jsonObject, this.authType, this.path);
    }
 
    public WebRtcTokenResponse obtainToken(User user) {
       String name = user.getFullName();
-      JSONObject obj = WebrtcUtils.getTokenRequestJson(user.getUsername(), this.path, name);
+      String appId = this.infobipRequestClientService.getApiKey();
+      JSONObject obj = WebrtcUtils.getTokenRequestJson(user.getUsername(), appId, name);
       JSONObject response = this.post(obj);
       return WebrtcUtils.getTokenFromJson(response);
    }
