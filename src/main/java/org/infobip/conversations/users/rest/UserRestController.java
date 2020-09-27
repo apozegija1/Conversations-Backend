@@ -77,6 +77,9 @@ public class UserRestController {
          }
       } else if(isAgent) {
          users = userService.getUsersByRole(AvailableRoles.User, pageable);
+      } else {
+         // It is regular user if it isn't some of above options
+         users = userService.getUsersByRole(AvailableRoles.Agent, pageable);
       }
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(users), HttpStatus.OK);
