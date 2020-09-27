@@ -44,7 +44,10 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "group by ua.username", nativeQuery = true)
    List<IReports> findCommunicationCountForPeriod(Long companyId, Timestamp fromDate, Timestamp toDate);
 
-
+   // Communication type id:
+   //    1 - Sms
+   //    2 - Video Call
+   //    3 - Audio Call
    @Query(value = "SELECT count(cm.id) AS 'number', MONTHNAME(cm.start_time) AS 'month' " +
       "FROM communications cm, users ua, users uc, companies cp, communicationtypes ct " +
       "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND cm.type_id = ct.id " +
@@ -54,6 +57,10 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "ORDER BY MONTH(cm.start_time) ASC", nativeQuery = true)
    List<IChartStatisticsOverview> findAllCallsByMonthsForCurrentYear(Long companyId, Long userId);
 
+   // Communication type id:
+   //    1 - Sms
+   //    2 - Video Call
+   //    3 - Audio Call
    @Query(value = "SELECT count(cm.id) AS 'number', MONTHNAME(cm.start_time) AS 'month' " +
       "FROM communications cm, users ua, users uc, communicationtypes ct " +
       "WHERE cm.agent_id = ua.id AND cm.customer_id = uc.id AND cm.type_id = ct.id " +
@@ -63,7 +70,10 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "ORDER BY MONTH(cm.start_time) ASC", nativeQuery = true)
    List<IChartStatisticsOverview> findAllCallsByMonthsForCurrentYearForUser(Long userId);
 
-
+   // Communication type id:
+   //    1 - Sms
+   //    2 - Video Call
+   //    3 - Audio Call
    @Query(value = "SELECT agents.one AS numberOfElementsOfEntityOne, calls.two AS numberOfElementsOfEntityTwo, average.three AS numberOfElementsOfEntityThree " +
       "FROM (SELECT count(ua.id) as one " +
       "      FROM users ua, companies cp " +
@@ -76,6 +86,10 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "     WHERE cm.type_id = ct.id AND (cm.type_id = 2 OR cm.type_id = 3) and cm.agent_id = ua.id AND cm.customer_id = uc.id AND ua.company_id = cp.id AND ua.company_id = ?1) as average", nativeQuery = true)
    List<IStatisticsOverview> findAllStatisticOverviewsForCompany(Long companyId);
 
+   // Communication type id:
+   //    1 - Sms
+   //    2 - Video Call
+   //    3 - Audio Call
    @Query(value = "SELECT sms.one AS numberOfElementsOfEntityOne, calls.two AS numberOfElementsOfEntityTwo, average.three AS numberOfElementsOfEntityThree " +
       "FROM (SELECT count(cm.id) as one" +
       "      FROM communications cm, communicationtypes ct, users ua, users uc " +
@@ -87,7 +101,6 @@ public interface CommunicationRepository extends JpaRepository<Communication, Lo
       "     FROM communications cm, communicationtypes ct, users ua, users uc " +
       "     WHERE cm.type_id = ct.id AND (cm.type_id = 2 OR cm.type_id = 3) and cm.agent_id = ua.id AND cm.customer_id = uc.id and (ua.id = ?1 OR uc.id = ?2)) as average", nativeQuery = true)
    List<IStatisticsOverview> findAllStatisticOverviewsForAgentOrUser(Long agentId, Long userId);
-
-//cm.type_id 1-sms 2-video 3-audio
+   
 }
 
