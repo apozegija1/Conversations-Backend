@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `communications` (
    `agent_id` int(11) unsigned NULL,
    `customer_id` int(11) unsigned NULL,
    `start_time` timestamp NOT NULL,
-   `end_time` timestamp NOT NULL,
+   `end_time` timestamp NULL,
    `text` varchar(255) NOT NULL,
    `message_id` varchar(255) NULL,
    PRIMARY KEY (`id`),

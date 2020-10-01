@@ -56,7 +56,7 @@ public class CommunicationService {
 
       CommunicationType type = oType.get();
       communication.setType(type);
-      communication.setEndTime(new Timestamp(System.currentTimeMillis()));
+
       // Check if type is sms and if user has entered his phone number
       if (type.getType().equals(AvailableCommunicationType.Sms.name())) {
          Response response = this.sendMessage(type, communication);
@@ -64,6 +64,8 @@ public class CommunicationService {
          if (response.status == ResultCode.ERROR) {
             throw new ResolutionException(response.message);
          }
+         // Sms has end time always if it was sent, video, audio etc may not have it if call wasn't successful and user didn't respond
+         communication.setEndTime(new Timestamp(System.currentTimeMillis()));
       }
 
       return communicationRepository.save(communication);
