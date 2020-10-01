@@ -2,11 +2,13 @@ package org.infobip.conversations.communications.rest;
 
 import org.infobip.conversations.common.Response;
 import org.infobip.conversations.common.ResultCode;
+import org.infobip.conversations.common.model.WebRtcTokenResponse;
 import org.infobip.conversations.communications.models.UserCommunication;
 import org.infobip.conversations.communications.repository.CommunicationRepository;
 import org.infobip.conversations.communications.repository.model.Communication;
 import org.infobip.conversations.communications.service.CommunicationService;
 import org.infobip.conversations.users.AvailableRoles;
+import org.infobip.conversations.users.repository.UserRepository;
 import org.infobip.conversations.users.repository.model.User;
 import org.infobip.conversations.users.service.UserService;
 import org.infobip.conversations.users.utils.SecurityUtils;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.infobip.conversations.common.Constant.SUCCESS;
 
@@ -27,14 +30,23 @@ public class CommunicationController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private CommunicationService communicationService;
+    private final CommunicationService communicationService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private CommunicationRepository communicationRepository;
+    private final CommunicationRepository communicationRepository;
+
+    private final UserRepository userRepository;
+
+    public CommunicationController(CommunicationService communicationService,
+                                   UserService userService,
+                                   CommunicationRepository communicationRepository,
+                                   UserRepository userRepository) {
+       this.communicationService = communicationService;
+       this.userService = userService;
+       this.communicationRepository = communicationRepository;
+       this.userRepository = userRepository;
+    }
 
     @PostMapping
     public ResponseEntity<Response> create(@RequestBody Communication communication) {
@@ -87,5 +99,16 @@ public class CommunicationController {
       }
       return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS)
          .setResult(communications), HttpStatus.OK);
+   }
+
+   @GetMapping("/webrtc/{userId}")
+   public ResponseEntity<Response> getWebrtcToken(@PathVariable Long userId) throws Exception {
+      Optional<User> oUser = userRepository.findById(userId);
+      if (oUser.isEmpty()) {
+         new ResponseEntity<>(new Response(ResultCode.ERROR, "Invalid user"), HttpStatus.NOT_FOUND);
+      }
+
+      WebRtcTokenResponse response = this.communicationService.getWebrtcToken(oUser.get());
+      return new ResponseEntity<>(new Response(ResultCode.SUCCESS, SUCCESS).setResult(response), HttpStatus.OK);
    }
 }

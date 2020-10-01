@@ -45,7 +45,6 @@ public class Communication {
 
    @Column(name = "end_time")
    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern=Constant.TIMESTAMP_FORMAT, timezone="Europe/Berlin")
-   @NotNull
    private Timestamp endTime;
 
    @Column(name = "text", length = 400)

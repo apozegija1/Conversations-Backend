@@ -3,6 +3,9 @@ package org.infobip.conversations.common.service.http;
 import org.infobip.conversations.common.model.ExternalAuthDto;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
@@ -11,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 public class RequestClient {
    private ExternalAuthDto externalAuthDto;
+   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
    public RequestClient(ExternalAuthDto authDto) {
       this.externalAuthDto = authDto;
@@ -84,7 +88,7 @@ public class RequestClient {
          if (json == null) return null;
          jsonObjectReturn = new JSONObject(json);
       } catch (IOException e) {
-         System.out.println(e.getLocalizedMessage());
+         logger.error(e.getLocalizedMessage(), e);
       }
       return jsonObjectReturn;
    }
